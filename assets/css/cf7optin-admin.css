@@ -1,0 +1,35 @@
+/* Stylesheet for admin Double opt-in for CF7 plugin
+*  version: 1.0
+*/
+.cf7-optin-shortcode {
+	background-color:#f0f0f1;
+	border:1px solid lightgray;
+	padding:5px;font-weight:700;
+	white-space:nowrap;
+}
+.cf7optin-cf7-notice {
+    border: solid 1px #a6a6a6;
+    padding: 0 1em;
+    margin-right: 300px;
+    border-radius: 4px;
+    background-color: #d7d7d7;
+}
+.cf7optin-options th {
+    width: 25%;
+}
+.cf7optin-options input[type="text"], .cf7optin-options textarea {
+    width: 80%;
+}
+.card.fullwidth {
+  max-width: 80%;
+}
+
+.card.fullwidth p {
+  line-height: 2em;
+}
+.point::before {
+    content: '⇛';
+    margin-right: 1em;
+    font-size: 1.5em;
+    color: #2271b1;
+}

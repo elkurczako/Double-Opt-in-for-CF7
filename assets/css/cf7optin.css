@@ -1,0 +1,12 @@
+/* Stylesheet for Double opt-in for CF7 plugin
+*  version: 1.0
+*/
+html {
+  scroll-behavior: smooth;
+}
+.wpcf7-form-control.wpcf7-submit {
+    cursor: pointer;
+}
+.wpcf7-form input:invalid {
+	outline: 1px red solid;
+}
