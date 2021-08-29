@@ -59,6 +59,7 @@
 	addMissingAttributes();
  });
  
+ //adds required attribute to elements with "cf7req" class
  function addMissingAttributes() {
 	 var $requiredInputs = document.querySelectorAll('.cf7req');
 	 if ($requiredInputs !== null) {
@@ -68,8 +69,9 @@
 	 }
  }
  
+ //copies confirmation email value from email field
  function copyConfirmationEmail() {
-	const confirmfield = document.querySelector('.wpcf7-form #confirm-email'); //ma być cf7 i pole potwierdzenia email
+	const confirmfield = document.querySelector('.wpcf7-form #confirm-email'); 
 	 if (confirmfield !== null) {
 		const emailfield = document.querySelector('#your-email');
 		 emailfield.addEventListener('blur', function(){copyEmailValue(emailfield, confirmfield);}, false);

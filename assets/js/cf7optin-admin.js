@@ -54,6 +54,7 @@
 docReady(function() {
 	cf7optinMaker();
 	cf7optinHandleKeys();
+	cf7optinCheckUsedShortcodes();
  });
 
 const optinUrl = '[_site_url]/opt-in?aid={{[_serial_number]}}&aem={{[your-email]}}';
@@ -110,7 +111,12 @@ function cf7optinHandleKeys() {
 	if (copyKeyBtn !== null) {
 		copyKeyBtn.addEventListener('click', cf7optinCopyEncryptKeys, true);
 	}
+	var removeAttachmentBtn = document.querySelector('#cf7optin-remove-attachment');
+	if (removeAttachmentBtn !== null) {
+		removeAttachmentBtn.addEventListener('click', cf7optinRemoveAttachment, true);
+	}
 }
+
 // Copies auto generated keys to inputs
 function cf7optinCopyEncryptKeys () {
 	var newkey = document.getElementsByClassName('cf7-optin-shortcode');
@@ -121,5 +127,51 @@ function cf7optinCopyEncryptKeys () {
 		enckey.value = newkey[0].innerHTML;
 		ivkey.value = newkey[1].innerHTML;
 		window.alert(cf7optinAdminText.KeysCopied);
+	}
+}
+
+// Removes final email attachment if Set
+function cf7optinRemoveAttachment() {
+	let fileinfo = this.parentNode;
+	let upload = document.querySelector('#cf7optin_final_attachment');
+	if (upload !== null) upload.value = "";
+	let remocheck = document.querySelector('#cf7optin_remove_attachment');
+	if (remocheck === null) {
+		const remover = document.createElement("input");
+		remover.id = "cf7optin_remove_attachment";
+		remover.name = "cf7optin_remove_attachment";
+		remover.setAttribute('type', 'hidden');
+		remover.value = "remove_attachment";
+		fileinfo.parentNode.insertBefore(remover, fileinfo);
+	}
+	fileinfo.remove();
+}
+
+//checks for CF7 shortcodes used on double opt-in form edit screen
+function cf7optinCheckUsedShortcodes() {
+	var shortcodes = document.getElementsByClassName('cf7-optin-shortcode');
+	if (shortcodes !== null) {
+		var textfields = [];
+		var fields = [
+			"registration_title",
+			"registration_files",
+			"registration_template",
+			"confirmation_title",
+			"confirmation_title"
+			];
+		for (let i = 0 ; i < fields.length ; i++) {
+			let field = document.getElementById(fields[i]);
+			textfields.push(field);
+		}		
+		//now search for shortcodes within textfields
+		for ( var i = 0; i < shortcodes.length ; i++) {
+			let shortcode = shortcodes[i].innerHTML;
+			for ( let j = 0; j < textfields.length; j++) {
+				let theSearch = textfields[j].value.indexOf(shortcode);
+				if (theSearch !== -1 ) {
+					shortcodes[i].classList.add("cf7optin-used");
+				}
+			}
+		}
 	}
 }

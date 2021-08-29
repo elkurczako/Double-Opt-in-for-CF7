@@ -73,12 +73,27 @@ function cf7optin_enqueue() {
 	'FirstEmailWarning'		=> _x('Attention! Email address is different than <a href="#confirm-email">confirmation address set below</a>. Check both fields for valid email.', 'Do not translate "#confirm-email"', 'cf7-optin'),
 	'NotEmailWarning'		=> __('Attention! Invalid email address!', 'cf7-optin')
 	);
-		
+			
 	wp_register_script( 'cf7optin-js',  cf7optin_PLUGIN_URL . 'assets/js/cf7optin.js', array(), '1.0');
 	wp_register_style( 'cf7optin-style',  cf7optin_PLUGIN_URL . 'assets/css/cf7optin.css', array(), '1.0');
 	wp_localize_script('cf7optin-js', 'cf7optinWarning', $cf7optin_js_strings);
 	wp_enqueue_script('cf7optin-js');
 	wp_enqueue_style('cf7optin-style');
+	//scripts when settings enabled
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$cf7optin_inputs = $cf7optin_options['fileinput'];
+	if ($cf7optin_inputs === 'true') {
+		wp_register_script( 'cf7optin-input-js',  cf7optin_PLUGIN_URL . 'assets/js/cf7optin-fileinput.js', array(), '1.0');
+		$cf7optin_js_fileinput_strings = array(
+			'LabelDefaultText'		=> __('Select file', 'cf7-optin'),
+			'SelectedFile'	=> _x('Selected: ', 'For filename to upload', 'cf7-optin'),
+			'SelectedSize'		=> _x('size: ', 'the size of the file to upload', 'cf7-optin'),
+			'RemoveFile'		=> __('Remove file', 'cf7-optin'),
+			'NoFileSelected'		=> __('No file selected', 'cf7-optin')
+		);
+		wp_localize_script( 'cf7optin-input-js', 'cf7optinInput', $cf7optin_js_fileinput_strings);
+		wp_enqueue_script( 'cf7optin-input-js' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'cf7optin_enqueue');
 
@@ -124,31 +139,42 @@ if ( 'confirm-email' == $tag->name ) {
 /* Custom validation messages for CF7 radios and checkboxes
 *  
 */
+
 add_filter( 'wpcf7_validate_checkbox', 'cf7optin_checkbox_validation_filter', 10, 2 );
 add_filter( 'wpcf7_validate_checkbox*', 'cf7optin_checkbox_validation_filter', 10, 2 );
 
 function cf7optin_checkbox_validation_filter( $result, $tag ) {
-	$name = $tag->name;
-	$is_required = $tag->is_required() || 'radio' == $tag->type;
-	$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$cf7optin_msg = $cf7optin_options['customvalidation'];
+	if ($cf7optin_msg === 'true') {
+		$name = $tag->name;
+		$is_required = $tag->is_required() || 'checkbox' == $tag->type;
+		$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
 
-	if ( $is_required and empty( $value ) ) {
-		$result->invalidate( $tag, __( 'Choose at least one option.', 'cf7-optin' ) );
+		if ( $is_required and empty( $value ) ) {
+			//filter to customize error message 
+			$message = apply_filters('cf7optin_checkbox_error_msg',  __( 'Choose at least one option.', 'cf7-optin' ));
+			$result->invalidate( $tag,$message);
+		}
 	}
-
 	return $result;
 }
 add_filter( 'wpcf7_validate_radio', 'cf7optin_radio_validation_filter', 10, 2 );
 
 function cf7optin_radio_validation_filter( $result, $tag ) {
-	$name = $tag->name;
-	$is_required = $tag->is_required() || 'radio' == $tag->type;
-	$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$cf7optin_msg = $cf7optin_options['customvalidation'];
+	if ($cf7optin_msg === 'true') {
+		$name = $tag->name;
+		$is_required = $tag->is_required() || 'radio' == $tag->type;
+		$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
 
-	if ( $is_required and empty( $value ) ) {
-		$result->invalidate( $tag, __( 'Chose one of the options.', 'cf7-optin' ) );
+		if ( $is_required and empty( $value ) ) {
+			//filter to customize error message 
+			$message = apply_filters('cf7optin_radio_error_msg', __( 'Chose one of the options.', 'cf7-optin' ) );
+			$result->invalidate( $tag, $message );
+		}
 	}
-
 	return $result;
 }
 
@@ -208,15 +234,16 @@ function cf7optin_get_url_params() {
 	$params = array($aid, $aem);
 	return $params;
 }
+
 /*	Main confirmation used by shortcode
 	Used on page with mandatory slug "opt-in"
 */
 function cf7optin_handle_opt_in_link() {
-	if (is_admin()) return; // cause we're redirecting to 404 i case of not valid url params
+	if (is_admin()) return; // cause we're redirecting to 404 in case of not valid url params
 	$url_params = cf7optin_get_url_params();
 	if (!$url_params) { 
 	// if no submission ID or submitter email in URL params - display error
-	//Should never happen because we're checking this before displaying page
+	//Should never happen because we're checking this before displaying the page
 		$message = array('alert', __('Error. Something went really wrong! No required parameters found!', 'cf7-optin'));
 	} else { // If found proper URL params - decrypting and checking if there is submission in flamingo posts
 		$realid = cf7optin_le_chiffre($url_params[0]);
@@ -249,6 +276,8 @@ function cf7optin_handle_opt_in_link() {
 					} else {
 						$subj = get_post_meta($submission, '_subject', true);
 						$message = array( '', sprintf( __('Document %1$s found.', 'cf7-optin'), $subj ));
+						//action hook fired when submission is found  
+						do_action('cf7optin_before_final_email');
 						cf7optin_handle_final_email($submission);
 					}
 				}
@@ -275,7 +304,7 @@ function cf7optin_mail_components( $components, $number ) {
 		$szt = substr_count($message_body,'{{');
 		$offset = 0;
 		for ($i = 0 ; $i < $szt ; $i++) {
-			// gets string between braces and encrypts
+			// gets string between double curly braces and encrypts
 		$firstchunk = strstr(substr($message_body,$offset),'}}',true);
 			$tag = strval(substr(strstr($firstchunk,'{{'),2)); 
 			$tags[$i] = array($tag => cf7optin_le_chiffre($tag, true)); 
@@ -331,6 +360,12 @@ function cf7optin_handle_final_email($sub_id) {
 	$mail_body = cf7optin_mail_tags_replace($form_data, $mail_body);
 	$headers = ($headers_type === 'html') ? array('Content-Type: text/html; charset=UTF-8') : ''; // HTML or plain text email 
 	$attachments = cf7optin_get_mail_attachments($form_data, $attachments);//get array of attachment file paths
+	//TODO - add csv attachment if set in settings
+	$delimiter = ';';
+	$csv_data = cf7optin_csv_prepare($form_data);
+	$csv_file_patch = cf7optin_make_csv($sub_id, $csv_data, $delimiter);
+	$attachments[] = $csv_file_patch;
+	//END TODO
 	if ( count($attachments) > 0 ) { //if attachments - adding info on page and in email
 		$message .= sprintf(__('Your document has %d attachment files. ', 'cf7-optin'), count($attachments));
 		$filenames = array();
@@ -479,7 +514,36 @@ function cf7optin_get_cf7_files($wpcf7) {
 }
 
 
-//DEBUG - Remove before publish
+/*	Gets form data array and prepares it for csv writing
+*/
+function cf7optin_csv_prepare ($form_data) {
+	$csv_header_row = array();
+	$csv_data_row = array();
+	foreach ($form_data as $key => $value) {
+		$csv_header_row[] = $key;
+		$csv_data_row[] = $value;
+	}
+	$csv = array($csv_header_row, $csv_data_row);
+	return $csv;
+}
+
+/*	Creates csv file in temp dir and returns file path
+*	$name - name of the file and directory
+*	$csv - prepared form data
+*/
+function cf7optin_make_csv ($name, $csv, $delimiter) {
+	$file_dir = trailingslashit(cf7optin_UPLOAD_DIR . $name);
+	$createdir = wp_mkdir_p($file_dir);
+	$the_file = $file_dir . $name . ".csv";
+	$csv_file = fopen( $the_file, "w" );
+	foreach ( $csv as $row) {
+		fputcsv($csv_file, $row, $delimiter);
+	}
+	fclose($csv_file);
+	return $the_file;
+}	
+
+//DEBUG - TODO  - Remove before publish
 //			ob_start();
 //			var_dump($k);
 //			$msg = ob_get_contents();
