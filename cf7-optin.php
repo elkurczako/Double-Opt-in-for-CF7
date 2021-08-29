@@ -3,7 +3,7 @@
  * 	Plugin Name: Double opt-in for CF7
 	Plugin URI: https://sirta.pl
 	Description: Additional validation and functionality to Contact Form 7 plugin. Extended validation and double opt-in. Adds custom CSS to CF7 forms.
-	Version: 0.1.2
+	Version: 1.0.0
 	Author: Krzysztof Busłowicz
 	Author URI: https://sirta.pl
 	Text Domain: cf7-optin
@@ -395,7 +395,12 @@ function cf7optin_handle_final_email($sub_id) {
 			$mail_body = get_post_meta($settings_id, '_con_template',true);
 			$mail_subject = cf7optin_mail_tags_replace($form_data, $mail_subject);
 			$mail_body = cf7optin_mail_tags_replace($form_data, $mail_body);
-			$mail_sent = wp_mail($mail_to,$mail_subject,$mail_body,$headers);
+			$con_attachment = get_post_meta($settings_id, '_final_attachment',true);
+			$attached_file = array();
+			if (!empty($con_attachment)) {
+				$attached_file[] = $con_attachment['file'];	
+			}
+			$mail_sent = wp_mail($mail_to,$mail_subject,$mail_body,$headers,$attached_file); //Confirmation email
 			if ($mail_sent === false) {
 				$message .= __('Your submission has been approved but there was an error while sending confirmation message. Please contact the site administrator.', 'cf7-optin');
 			} else { //All went OK - deleting attachment files if needed
@@ -412,6 +417,7 @@ function cf7optin_handle_final_email($sub_id) {
 	}
 	echo '<p>'. $message .'</p>';
 }
+
 
 /* 
 *  Replaces flamingo post fields with tags in HTML template 
