@@ -51,6 +51,29 @@ function cf7optin_enqueue_admin_script( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'cf7optin_enqueue_admin_script' );
 
+/*	
+*	Change the  export CSV separator to semicolon if set
+*/
+function cf7optin_set_csv_separator() {
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	if (isset($cf7optin_options['flamingo_csv']) && $cf7optin_options['flamingo_csv'] === 'true') {
+		add_filter('flamingo_csv_value_separator', function($seperator) {  return ';';}, 999);	
+		add_filter( 'flamingo_csv_quotation', 'cf7optin_add_bom_flamingo_csv', 11 );
+
+		//add_filter('cfdb7_delimiter', function($delimiter) {  return ';';},12);
+	} 
+}
+add_action('admin_init', 'cf7optin_set_csv_separator');
+
+function cf7optin_add_bom_flamingo_csv( $input ) {
+	$input = chr(0xEF) . chr(0xBB) . chr(0xBF) . $input;
+	return $input;
+}
+
+
+
+
+
 /* 
 *  Double opt-in for CF7 settings page
 */
@@ -76,25 +99,17 @@ function cf7optin_register_settings() {
 		'cf7optinmain_section_text',
 		'wpcf7-optin' 
 	);
-
-    add_settings_field( 
+	add_settings_field( 
+		'cf7optin_encrypt_keys', 
+		__('Strings used to encrypt double opt in confirmation link','cf7-optin'), 
+		'cf7optin_encryption_keys', 
+		'wpcf7-optin', 
+		'cf7optin_opts' 
+	);
+	add_settings_field( 
 		'cf7optin_registration_expiration', 
 		__('How many hours to confirm with link in email before submission expires?', 'cf7-optin'), 
 		'cf7optin_expiration', 
-		'wpcf7-optin', 
-		'cf7optin_opts' 
-	);
-	add_settings_field( 
-		'cf7optin_encrypt_key', 
-		__('Encryption key', 'cf7-optin'), 
-		'cf7optin_encryption_key', 
-		'wpcf7-optin', 
-		'cf7optin_opts' 
-	);
-	add_settings_field( 
-		'cf7optin_encrypt_iv', 
-		__('Encryption initialization vector', 'cf7-optin'), 
-		'cf7optin_encryption_iv', 
 		'wpcf7-optin', 
 		'cf7optin_opts' 
 	);
@@ -109,6 +124,13 @@ function cf7optin_register_settings() {
 		'cf7optin_custom_val_msg', 
 		__('Enchance validation error messages', 'cf7-optin'), 
 		'cf7optin_custom_validation_msg', 
+		'wpcf7-optin', 
+		'cf7optin_opts' 
+	);
+	add_settings_field( 
+		'cf7optin_change_flamingo_csv_separator', 
+		__('Change the CSV separator to semicolon ( ; ) and set UTF-8 BOM encoding.', 'cf7-optin'), 
+		'cf7optin_flamingo_csv_separator', 
 		'wpcf7-optin', 
 		'cf7optin_opts' 
 	);
@@ -131,33 +153,33 @@ function cf7optin_options_validate( $input ) {
 
 
 // Options field construct
+function cf7optinmain_section_text() {
+}
 function cf7optin_expiration() {
 	$cf7optin_options = get_option('cf7optin_main_settings');
 	echo '<p>';
 	echo '<input type="number" min="0" step="1" id="cf7optin-reg-expire" name="cf7optin_main_settings[expires]" autocomplete="off" value="' . esc_attr( $cf7optin_options['expires'] ) . '">';
 	echo '</p>'; 
 }
-function cf7optinmain_section_text() {
+function cf7optin_encryption_keys(){
 	$cf7optin_options = get_option('cf7optin_main_settings');
+	echo '<div style="max-width: 520px;display: inline-block;vertical-align: top;"><table class="form-table"><tbody>';
+	echo '<tr><th><label for="cf7optin-enc-key">'. __('Encryption key', 'cf7-optin') . '</label></th>';
+	echo '<td><input type="text" size="40" id="cf7optin-enc-key" name="cf7optin_main_settings[enc_key]" autocomplete="off" value="' . esc_attr( $cf7optin_options['enc_key'] ) . '">';
+	echo '</td></tr>';
+	echo '<tr><th><label for="cf7optin-enc-iv">'. __('Encryption initialization vector', 'cf7-optin') . '</label></th>';
+	echo '<td><input type="text" size="40" id="cf7optin-enc-iv" name="cf7optin_main_settings[enc_iv]" autocomplete="off" value="' . esc_attr( $cf7optin_options['enc_iv'] ) . '">';
+	echo '</td></tr></tbody></table></div>';
 	$newkey = bin2hex(random_bytes(16));
 	$newiv = bin2hex(random_bytes(16));
-	echo '<p>' . __('Auto generated Key: ', 'cf7-optin') . cf7optin_elem($newkey) . '</p>';
-	echo '<p>' . __('Auto generated Initialization Vector: ', 'cf7-optin') . cf7optin_elem($newiv) . '</p>';
+	echo '<div class="card " style="display: inline-block;"><table class="form-table"><tbody>';
+	echo '<tr><th scope="row">' . __('Auto generated Key: ', 'cf7-optin') . '</th><td><p>' . cf7optin_elem($newkey) . '</p></td></tr>';
+	echo '<tr><th scope="row">' . __('Auto generated Initialization Vector: ', 'cf7-optin') . '</th><td><p>' . cf7optin_elem($newiv) . '</p></td></tr>';
+	echo '</tbody></table>';
 	echo '<p>' . __('Copy those strings to Key and Initialization Vector fields below or enter your own encryption strings.', 'cf7-optin') . '</p>';
 	echo '<p><a href="#" id="cf7optin-copy-keys" class="button button-primary">' . __( 'Copy encryption keys', 'cf7-optin') . '</a></p>';
 	echo '<strong>' . __('Important! Changing the keys below when there are unaccepted opt-ins will make them unacceptable.', 'cf7-optin') . '</strong>';
-}
-function cf7optin_encryption_key(){
-	$cf7optin_options = get_option('cf7optin_main_settings');
-	echo '<p>';
-	echo '<input type="text" size="40" id="cf7optin-enc-key" name="cf7optin_main_settings[enc_key]" autocomplete="off" value="' . esc_attr( $cf7optin_options['enc_key'] ) . '">';
-	echo '</p><p>' . __('Strings used to encrypt double opt in confirmation link','cf7-optin') . '</p>'; 
-}
-function cf7optin_encryption_iv(){
-	$cf7optin_options = get_option('cf7optin_main_settings');
-	echo '<p>';
-	echo '<input type="text" size="40" id="cf7optin-enc-iv" name="cf7optin_main_settings[enc_iv]" autocomplete="off" value="' . esc_attr( $cf7optin_options['enc_iv'] ) . '">';
-	echo '</p>'; 
+	echo '</div>';
 }
 function cf7optin_file_input_override(){
 	$cf7optin_options = get_option('cf7optin_main_settings');
@@ -169,6 +191,7 @@ function cf7optin_file_input_override(){
 	echo '<input type="checkbox" id="std_inp" name="cf7optin_main_settings[fileinput]" value="true"'. $overr . '>';
 	echo '<span class="slider round"></span>';
 	echo '</label>';
+	echo '</p><p>' . __('Standard file inputs will be replaced with more flexible element. New control shows file size information and allows to remove selected file from upload. You can also change its appearance with CSS.','cf7-optin');
 	echo '</p>';
 }
 function cf7optin_custom_validation_msg(){
@@ -186,6 +209,18 @@ function cf7optin_custom_validation_msg(){
 	echo '<p><strong>' . __( 'Choose at least one option.', 'cf7-optin' ) . '</strong>' . __(' – as checkbox input validation error message.', 'cf7-optin') . '</p>';
 	echo '<p><strong>' . __( 'Chose one of the options.', 'cf7-optin' ) . '</strong>' . __(' – as radio input validation error message.', 'cf7-optin') . '</p>';
 	echo '<p>' . sprintf(__('Those messages can be changed by %1$s and %2$s filter hooks.', 'cf7-optin'), '<code>"cf7optin_checkbox_error_msg"</code>', '<code>"cf7optin_radio_error_msg"</code>') . '</p>'; 
+}
+function cf7optin_flamingo_csv_separator(){
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$flamingo_csv_override = isset($cf7optin_options['flamingo_csv']) ? esc_attr($cf7optin_options['flamingo_csv']) : 'false';
+	$overr = "";
+	if ($flamingo_csv_override === "true") $overr = "checked";
+	echo '<p>';
+	echo '<label for="flamingo_csv" class="switch">';
+	echo '<input type="checkbox" id="flamingo_csv" name="cf7optin_main_settings[flamingo_csv]" value="true"'. $overr . '>';
+	echo '<span class="slider round"></span>';
+	echo '</label>';
+	echo '</p><p>' . sprintf(__('This option applies to CSV file attachments generated by this plugin and to CSV exports of %s. ','cf7-optin'), 'Flamingo') . __('UTF-8 with BOM is useful when your form data contains language specific characters (e.g. ą, é, ç, ü),and you want to open your CSV files in MS Excel. BOM (Byte Order Mark) can cause issues to some software so use it for Excel only.', 'cf7-optin') . '</p>';
 }
 function cf7optinmain_help() {
 	$subject_str = 'flamingo_subject: "' . __('Enter your double opt-in form name here', 'cf7-optin') . '"';
@@ -298,6 +333,7 @@ function cf7optin_form_metabox() {
 	$selectedform = get_post_meta($post->ID, '_cf7_form', true); //associated cf7 form
 	$selectedcf7 = ($selectedform !== '' && $selectedform !== '0') ? get_the_title(intval($selectedform)) : __('no CF7 form selected', 'cf7-optin');
 	$mail_format = 	get_post_meta($post->ID, '_reg_headers', true);
+	$csv_attachment = get_post_meta($post->ID, '_csv', true);
 	$registration_email = get_post_meta($post->ID, '_reg_email', true); //email to send accepted forms to
 	$registration_title = get_post_meta($post->ID, '_reg_title', true); 
 	$registration_files = get_post_meta($post->ID, '_reg_files', true); 
@@ -337,17 +373,32 @@ function cf7optin_form_metabox() {
 			if ($selectedform !== '' && $selectedform !== '0') { //show form options if form selected
 			?>
 			<tr>
-				<th scope="row"><?php _e('How to format emails?', 'cf7-optin'); ?>
+				<th scope="row"><?php _e('Send HTML emails?', 'cf7-optin'); ?>
 				<td>
-					<p>
-						<label><?php _e("HTML format", 'cf7-optin'); ?> 
-							<input type="radio" id="email_format" name="email_format" value="html" <?php if ($mail_format === 'html' || $mail_format === '') echo 'checked'; ?>>
-						</label>
-						<label><?php _e("Plain text format", 'cf7-optin'); ?> 
-							<input type="radio" id="email_format" name="email_format" value="text" <?php if ($mail_format === 'text') echo 'checked'; ?>>
-						</label>
-					</p>
+				<?php
+				$formatcheck = "";
+				if ($mail_format === "html") $formatcheck = "checked";
+					echo '<p>';
+					echo '<label for="email_format" class="switch">';
+					echo '<input type="checkbox" id="email_format" name="email_format" value="html"'. $formatcheck . '>';
+					echo '<span class="slider round"></span>';
+					echo '</label>';
+					echo '</p>'; ?>	
 				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php _e('Attach csv file with form data?', 'cf7-optin'); ?>
+				<td><?php
+				$csvcheck = "";
+				if ($csv_attachment === "true") $csvcheck = "checked";
+					echo '<p>';
+					echo '<label for="csv_attachment" class="switch">';
+					echo '<input type="checkbox" id="csv_attachment" name="csv_attachment" value="true"'. $csvcheck . '>';
+					echo '<span class="slider round"></span>';
+					echo '</label>';
+					echo '</p>'; ?>	
+				</td>
+			</tr>
 			<tr>
 				<th scope="row"><?php _e('Final email address', 'cf7-optin'); ?><br/><span style="font-weight:400;"><?php _e('The address your confirmed forms will be sent to','cf7-optin'); ?></span></th>
 				<td>
@@ -465,6 +516,14 @@ function cf7optin_save_form_meta($post_id, $post) {
 	if ( isset ( $_POST['email_format'] )) {
 		$email_format = sanitize_text_field( $_POST['email_format'] );
 		update_post_meta( $post_id, '_reg_headers', $email_format );
+	} else {
+		update_post_meta( $post_id, '_reg_headers', "" );
+	}
+	if ( isset ( $_POST['csv_attachment'] )) {
+		$csv_attachment = sanitize_text_field( $_POST['csv_attachment'] );
+		update_post_meta( $post_id, '_csv', $csv_attachment );
+	} else {
+		update_post_meta( $post_id, '_csv', "" );
 	}
 	if ( isset ( $_POST['registration_email'] )) {
 		$registration_email = sanitize_text_field( $_POST['registration_email'] );

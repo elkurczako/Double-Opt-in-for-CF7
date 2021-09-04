@@ -185,7 +185,7 @@ function cf7optin_radio_validation_filter( $result, $tag ) {
 */
 function cf7optin_le_chiffre($inputStr = "",$action = false){
      $outputStr = null;
-	 $template_opts = get_option('cf7optin_mail_templates'); // ile godzin ustawiono ważności
+	 $template_opts = get_option('cf7optin_main_settings'); // ile godzin ustawiono ważności
 	 $secret_key = $template_opts['enc_key'];
 	 $secret_iv = $template_opts['enc_iv'];
      $key = hash('sha256',$secret_key);
@@ -264,13 +264,13 @@ function cf7optin_handle_opt_in_link() {
 			if ($sserial === intval($realid)) {
 				$now_date = current_time( 'timestamp' ); //checking if not expired
 				$sub_date = get_the_date('U',$submission);
-				$template_opts = get_option('cf7optin_mail_templates'); // hours to expire from settings
+				$template_opts = get_option('cf7optin_main_settings'); // hours to expire from settings
 				$expires = intval($template_opts['expires']);
 				$extime = $expires * 3600;
 				if ($now_date - $sub_date > $extime) {
 					$message = array('alert', sprintf(__('Error. This document has expired and can not be approved. More than %d hours from submission passed.', 'cf7-optin'), $expires));
 				} else {
-					$status = get_post_meta($submission, '_accepted', true); //checking if already confirmed
+					$status = get_post_meta($submission, '_field_accepted', true); //checking if already confirmed
 					if ($status === '1') {
 						$message = array( 'alert', __('Error. This document has been already approved.', 'cf7-optin'));
 					} else {
@@ -329,6 +329,7 @@ add_filter( 'wpcf7_mail_components', 'cf7optin_mail_components', 10, 2 );
 * 	Parameter is flamingo post ID
 */
 function cf7optin_handle_final_email($sub_id) {
+	$cf7optin_options = get_option('cf7optin_main_settings');
 	$form = get_post_meta($sub_id); // get flamingo post meta
 	$form_subject = $form['_subject'][0];
 	$form_data = array(); // data to insert in mail templates
@@ -353,6 +354,7 @@ function cf7optin_handle_final_email($sub_id) {
 	$mail_subject = get_post_meta($settings_id, '_reg_title',true);
 	$mail_body = get_post_meta($settings_id, '_reg_template',true);
 	$headers_type =  get_post_meta($settings_id, '_reg_headers',true);
+	$add_csv =  get_post_meta($settings_id, '_csv',true);
 	$attachments = get_post_meta($settings_id, '_reg_files',true);
 	// mail components - replacing tags with stored values
 	$message = '';
@@ -360,12 +362,13 @@ function cf7optin_handle_final_email($sub_id) {
 	$mail_body = cf7optin_mail_tags_replace($form_data, $mail_body);
 	$headers = ($headers_type === 'html') ? array('Content-Type: text/html; charset=UTF-8') : ''; // HTML or plain text email 
 	$attachments = cf7optin_get_mail_attachments($form_data, $attachments);//get array of attachment file paths
-	//TODO - add csv attachment if set in settings
-	$delimiter = ';';
-	$csv_data = cf7optin_csv_prepare($form_data);
-	$csv_file_patch = cf7optin_make_csv($sub_id, $csv_data, $delimiter);
-	$attachments[] = $csv_file_patch;
-	//END TODO
+	// add csv attachment if set in settings
+	if ($add_csv === 'true') {
+		$delimiter = (isset($cf7optin_options['flamingo_csv']) && $cf7optin_options['flamingo_csv'] === 'true') ? ';' : ',';
+		$csv_data = cf7optin_csv_prepare($form_data);
+		$csv_file_patch = cf7optin_make_csv($sub_id, $csv_data, $delimiter);
+		$attachments[] = $csv_file_patch;
+	}
 	if ( count($attachments) > 0 ) { //if attachments - adding info on page and in email
 		$message .= sprintf(__('Your document has %d attachment files. ', 'cf7-optin'), count($attachments));
 		$filenames = array();
@@ -385,7 +388,7 @@ function cf7optin_handle_final_email($sub_id) {
 	
 	if ($mail_sent) {
 		$message .= __('Thank you. Your submission has been approved and sent properly.', 'cf7-optin');
-		$update = update_post_meta($sub_id, '_accepted' , '1');
+		$update = update_post_meta($sub_id, '_field_accepted' , '1');
 		if ($update === false) { 
 			$message .= __('Your submission has been approved but there was an error while processing data. Please contact the site administrator.', 'cf7-optin');
 		} else {
@@ -542,6 +545,7 @@ function cf7optin_make_csv ($name, $csv, $delimiter) {
 	$createdir = wp_mkdir_p($file_dir);
 	$the_file = $file_dir . $name . ".csv";
 	$csv_file = fopen( $the_file, "w" );
+	fputs( $csv_file, ( chr(0xEF) . chr(0xBB) . chr(0xBF) ) ); //UTF8-BOM
 	foreach ( $csv as $row) {
 		fputcsv($csv_file, $row, $delimiter);
 	}

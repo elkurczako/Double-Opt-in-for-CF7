@@ -108,11 +108,11 @@ function displayFileInfo() {
 */
 function addFileRemover(node, fileInfo, arefiles = false) {
 	container = node.parentNode;
-	const btn = document.createElement("button"); 
+	const btn = document.createElement("button");
+	btn.setAttribute("type", "button");
 	if ( arefiles ) {
 		btn.innerHTML = '<span aria-hidden="true">' + cf7optinInput.RemoveFile + '</span><span class="sr-only">' + cf7optinInput.RemoveFile + fileInfo + '</span>' ;
 		btn.className = 'file-upload';
-		btn.setAttribute("type", "button");
 	} else {
 		btn.innerHTML = cf7optinInput.NoFileSelected;
 		btn.className = 'nofileselected';

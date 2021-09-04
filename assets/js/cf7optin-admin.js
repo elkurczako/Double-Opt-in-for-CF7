@@ -97,7 +97,8 @@ function cf7optinFillTheForm(){
 	
 	let confirmMsg = cf7optinAdminText.ConfirmEmail;
 	let optinMsg = cf7optinAdminText.FinalizeSubmission;
-	form.value += '\r\n' + '<label>' + confirmMsg + '[confirm-email]</label>';
+	form.value += '\r\n' + '<label>' + confirmMsg + '[email confirm-email]</label>';
+	form.value += '\r\n' + '[hidden accepted default:"0"]';
 	email.value += '\r\n' + optinMsg + optinUrl;
 	recipient.value = '[your-email]';
 	flamingo.value = 'flamingo_email: "[your-email]"' + '\r\n' + 'flamingo_subject: "' + title.value +'"';
