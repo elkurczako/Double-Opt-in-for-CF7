@@ -1,6 +1,7 @@
 <?php
 /* Admin scripts for Double opt-in for CF7 plugin
 ** Adds custom post type to store double opt in settings of individual CF7 forms 
+** version 1.0.0
 */
 
 defined( 'ABSPATH' ) or die( 'Cheating? 	No script kiddies please!' );
@@ -30,7 +31,7 @@ function cf7optin_enqueue_admin_script( $hook ) {
 	if (strpos($hook, '_page_wpcf7') !== false)  $good_to_go = true; 
 	if ($good_to_go) {
 		$cf7optin_admnin_js_strings = array(
-			'OptInEnabled'			=> __('This is Double Opt-In ready form. For this feature to work set final emails in "Double Opt-in Forms" menu.', 'cf7-optin'),
+			'OptInEnabled'			=> sprintf(__('This is Double Opt-In ready form. For this feature to work set final emails in %s menu.', 'cf7-optin'), '<a href="' . esc_url( admin_url('edit.php?post_type=cf7optin_settings')) . '">' . __( 'All Opt-In Forms', 'cf7-optin' ) . '</a>'),
 			'EnterTitle'			=> __('Enter the form title first!', 'cf7-optin'),
 			'FormUpdated'			=> __('Your form has been updated with Double Opt In options!', 'cf7-optin'),
 			'ConfirmEmail'		 	=> __('Confirm email address ', 'cf7-optin'),
@@ -40,8 +41,8 @@ function cf7optin_enqueue_admin_script( $hook ) {
 ', 'cf7-optin'),
 			'KeysCopied'			=> __('New encryption keys are set. You have to save the settings for the change to take effect.', 'cf7-optin')
 			);
-		wp_register_style( 'cf7optin-admin-style', cf7optin_PLUGIN_URL . 'assets/css/cf7optin-admin.css', array(), '1.0' );
-		wp_register_script( 'cf7optin-admin-js',  cf7optin_PLUGIN_URL . 'assets/js/cf7optin-admin.js', array(), '1.0');
+		wp_register_style( 'cf7optin-admin-style', cf7optin_PLUGIN_URL . 'inc/css/cf7optin-admin.css', array(), '1.0' );
+		wp_register_script( 'cf7optin-admin-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin-admin.js', array(), '1.0');
 		wp_localize_script('cf7optin-admin-js', 'cf7optinAdminText', $cf7optin_admnin_js_strings);
 		wp_enqueue_style( 'cf7optin-admin-style' );
 		wp_enqueue_script('cf7optin-admin-js');
@@ -59,8 +60,6 @@ function cf7optin_set_csv_separator() {
 	if (isset($cf7optin_options['flamingo_csv']) && $cf7optin_options['flamingo_csv'] === 'true') {
 		add_filter('flamingo_csv_value_separator', function($seperator) {  return ';';}, 999);	
 		add_filter( 'flamingo_csv_quotation', 'cf7optin_add_bom_flamingo_csv', 11 );
-
-		//add_filter('cfdb7_delimiter', function($delimiter) {  return ';';},12);
 	} 
 }
 add_action('admin_init', 'cf7optin_set_csv_separator');
@@ -70,23 +69,22 @@ function cf7optin_add_bom_flamingo_csv( $input ) {
 	return $input;
 }
 
-
-
-
-
 /* 
 *  Double opt-in for CF7 settings page
 */
 function cf7optin_render_settings_page() {
     ?>
     <h2><?php _e('CF7 Double Opt-in Settings', 'cf7-optin'); ?></h2>
+	<?php settings_errors(); ?>
     <form action="options.php" method="post">
         <?php 
         settings_fields( 'cf7optin_options' );
         do_settings_sections( 'wpcf7-optin' ); ?>
         <input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e( 'Save settings', 'cf7-optin' ); ?>" />
+		<?php do_settings_sections( 'cf7optin-manual' ); ?>
     </form>
-    <?php  do_settings_sections( 'wpcf7-optin-help' ); 
+    <?php  
+	do_settings_sections( 'wpcf7-optin-help' ); 
 }
 
 // Double opt-in for CF7 plugin main settings
@@ -98,6 +96,13 @@ function cf7optin_register_settings() {
 		__('General plugin settings','cf7-optin'), 
 		'cf7optinmain_section_text',
 		'wpcf7-optin' 
+	);
+	add_settings_field( 
+		'cf7optin_db_plugin', 
+		__('Choose CF7 database plugin','cf7-optin'), 
+		'cf7optin_db_plugin_used', 
+		'wpcf7-optin', 
+		'cf7optin_opts' 
 	);
 	add_settings_field( 
 		'cf7optin_encrypt_keys', 
@@ -135,25 +140,113 @@ function cf7optin_register_settings() {
 		'cf7optin_opts' 
 	);
 	add_settings_section( 
+		'cf7optin_manual_optin', 
+		__('Manual submission confirmation','cf7-optin'), 
+		'cf7optin_manual_submission',
+		'cf7optin-manual' 
+	);
+	add_settings_section( 
 		'cf7optin_options_help', 
 		__('Basic Doble Opt In help','cf7-optin'), 
 		'cf7optinmain_help',
 		'wpcf7-optin-help' 
 	);
 	
-	
 }
 add_action( 'admin_init', 'cf7optin_register_settings' );
 
-// TODO - validate the settings before saving !!!!!
+/* 	Validating and sanitizing the settings before saving !!!!!
+*/
 function cf7optin_options_validate( $input ) {
-    $newinput = $input;
-    return $newinput;
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$errmsg = __('Double Opt-in for CF7 Settings updated successfully.', 'cf7-optin');
+	$errtype = 'success';
+	if ( null != $input ) {
+	
+		if (!in_array($input['db_plugin'], ['cfdb7', 'flamingo'])) {
+			$errmsg = __('Error. Contact Form 7 compatible database plugin must be set. Not changed.', 'cf7-optin');
+			$errtype = 'error';
+			$input['db_plugin'] = $cf7optin_options['db_plugin'];
+		} else {
+			$input['db_plugin'] = sanitize_text_field($input['db_plugin']);
+		}
+		if ($input['enc_key'] === '' || $input['enc_key'] === null || $input['enc_iv'] === '' || $input['enc_iv'] === null) {
+			$errmsg = __('Error. Encryption keys must have a value. Setting not changed.', 'cf7-optin');
+			$errtype = 'error';
+			$input['enc_key'] = $cf7optin_options['enc_key'];
+			$input['enc_iv'] = $cf7optin_options['enc_iv'];
+		} else {
+			$input['enc_key'] = sanitize_text_field($input['enc_key']);
+			$input['enc_iv'] = sanitize_text_field($input['enc_iv']);
+		}
+		if (intval($input['expires']) === 0) {
+			$errmsg = __('Warning. You have set expiration to ZERO hours. No double opt-in form will be confirmed!', 'cf7-optin');
+			$errtype = 'warning';
+		} else if (intval($input['expires']) < 0 ) {
+			$errmsg = __('Error. Invalid expiration value!', 'cf7-optin');
+			$errtype = 'error';
+		} else {
+			$input['expires'] = sanitize_text_field($input['expires']);
+		}
+		$boxes = array($input['fileinput'], $input['customvalidation'], $input['flamingo_csv']);
+		foreach ($boxes as $box) {
+			if (!in_array($box, ['true', null])) {
+				$errmsg = __('Error. Invalid checkbox value! No changes!', 'cf7-optin');
+				$errtype = 'error';
+				foreach ($input as $setting=>$key) {
+					$setting = $cf7optin_options[$key];
+				} 
+			} else {
+				$box = sanitize_text_field($box);
+			}
+		}
+		if ($input['enc_aem'] !== '' && filter_var($input['enc_aem'], FILTER_VALIDATE_EMAIL ) === false) {
+			$errmsg = __('Error. Invalid Submission email entered for manual confirmation! This must be a valid email address.', 'cf7-optin');
+			$errtype = 'error';
+			$input['enc_aem'] = $cf7optin_options['enc_aem'];
+		} else {
+			$input['enc_aem'] = sanitize_email($input['enc_aem']);
+		}
+		if ($input['enc_txt'] !== '' && filter_var($input['enc_txt'], FILTER_VALIDATE_INT, array ('min_range' => 1) ) === false) {
+			$errmsg = __('Error. Invalid Submission ID entered for manual confirmation! This must be integer value.', 'cf7-optin');
+			$errtype = 'error';
+			$input['enc_txt'] = $cf7optin_options['enc_txt'];
+		} else {
+			$input['enc_txt'] = sanitize_key($input['enc_txt']);
+		}
+  	} else {
+		$errmsg = __('Settings update failure! No data to process.', 'cf7-optin');
+		$errtype = 'error';
+	}
+	
+	add_settings_error(
+        'cf7optin_options',
+        esc_attr( 'optin-validate' ),
+        $errmsg,
+        $errtype
+    );
+	return $input;
 }
 
 
 // Options field construct
 function cf7optinmain_section_text() {
+}
+function cf7optin_db_plugin_used() {
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$flamingo = is_plugin_active( 'flamingo/flamingo.php' );
+	$cfdb7 = is_plugin_active( 'contact-form-cfdb7/contact-form-cfdb-7.php');
+	$db_plugin = isset(($cf7optin_options['db_plugin'])) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
+	$dbflamingo = ($flamingo && $db_plugin === 'flamingo') ? "checked" : "";
+	$dbcfdb7 = ($cfdb7 && $db_plugin === 'cfdb7') ? "checked" : "";
+	echo '<fieldset><legend><span class="screen-reader-text">' . __('Choose CF7 database plugin','cf7-optin') . '</span></legemd>';
+	$flaenable = ($flamingo) ? '' : ' disabled';
+	$plugin_status = ($flamingo) ? __('plugin installed', 'cf7-optin') : __('plugin not installed', 'cf7-optin');
+	echo '<input type="radio" id="cf7optin_db_plugin_flamingo" name="cf7optin_main_settings[db_plugin]" value="flamingo" ' . $dbflamingo . $flaenable . '><label for="cf7optin_db_plugin_flamingo" class=" optin-option '. $flaenable . '">Flamingo - ' . $plugin_status . '</label><br/>';
+	$cfdbenable = ($cfdb7)  ? '' : ' disabled'; 
+	$plugin_status = ($cfdb7) ? __('plugin installed', 'cf7-optin') : __('plugin not installed', 'cf7-optin');
+	echo '<input type="radio" id="cf7optin_db_plugin_cfdb7" name="cf7optin_main_settings[db_plugin]" value="cfdb7" ' . $dbcfdb7 . $cfdbenable . '><label for="cf7optin_db_plugin_cfdb7" class=" optin-option '. $cfdbenable . '">Contact Form 7 Database Add-on – CFDB7 - ' . $plugin_status . '</label>';
+	echo '</fieldset>';
 }
 function cf7optin_expiration() {
 	$cf7optin_options = get_option('cf7optin_main_settings');
@@ -224,7 +317,7 @@ function cf7optin_flamingo_csv_separator(){
 }
 function cf7optinmain_help() {
 	$subject_str = 'flamingo_subject: "' . __('Enter your double opt-in form name here', 'cf7-optin') . '"';
-	echo '<div class="card fullwidth">';
+	echo '<div id="optin-help" class="card fullwidth">';
 	echo '<h3>'. __('What is double opt in and why use it:', 'cf7-optin') . '</h3>';
 	echo '<p>' . __('Double opt-in is the safe way of receiving site visitor&apos;s submitted input. Used with contact forms or online questionnaires or with user registration, it helps to highly <strong>reduce spam submissions</strong>. With <strong>GDPR laws</strong>, double opt-in is a strongly recommended way of getting user data. Because submitters has to confirm their identity from their email address, you can reduce risk of processing personal data without permission. Double - means here that user submitting the data has to give consent by checking checkbox option and additionally confirm their email-address. Do not forget to set acceptance field in your CF7 form if GDPR is in concern!', 'cf7-optin') . '</p>';
 	echo '<h3>'. __('How Double opt in form works:', 'cf7-optin') . '</h3>';
@@ -232,12 +325,34 @@ function cf7optinmain_help() {
 	echo '<br />' . __('If validation fails or when submission has expired, no emails are sent. If there are no specified parameters in url, wisitors of the "opt-in" page are redirected to "404" page.', 'cf7-optin') . '</p>'; 
 	echo '<h3>'. __('Double Opt-in for CF7 requirements: ','cf7-optin') .'</h3>';
 	echo '<p class="point">' . sprintf(__('Double opt in requires %1$s and  %2$s plugins by %3$s to be installed and active.', 'cf7-optin'), '<strong>Contact Form 7</strong>', '<strong>Flamingo</strong>', 'Takayuki Miyoshi' ) . '</p>'; 
-	echo '<p class="point">' . __('For proper submitter email validation you should use following tags in your CF7 forms: ','cf7-optin') . cf7optin_elem('[your-email]') . ', ' . cf7optin_elem('[confirm-email]') . __('That is important part because their email will be used for sending confirmation link. Typo in email address means they will not be able to confirm and submit the form.', 'cf7-optin') . '</p>';
+	echo '<p class="point">' . __('For proper submitter email validation you should use following tags in your CF7 forms: ','cf7-optin') . cf7optin_elem('[email* your-email]') . ', ' . cf7optin_elem('[email* confirm-email]') . __(' That is important part because their email will be used for sending confirmation link. Typo in email address means they will not be able to confirm and submit the form.', 'cf7-optin') . '</p>';
+	echo '<p class="point">' . __('For easy filtering accepted forms in CSV export files form your CF7 database plugin (e.g. Flamigo) you should use following tag in your CF7 forms: ','cf7-optin') . cf7optin_elem('[hidden accepted default:"0"]') . __(' Submissions with field "accepted" set to value "1" are the properly doble opt-in validated ones.', 'cf7-optin') . '</p>';
 	echo '<p class="point">' . sprintf(__('Double opt in requires %s tag to be set as email address of the first CF7 emial recipient.', 'cf7-optin'), cf7optin_elem('[your-email]') ) . '</p>';   
 	echo '<p class="point">' . __('For doble opt-in to work correctly insert following confirmation link in first CF7 email: ','cf7-optin'). cf7optin_elem('[_site_url]/opt-in?aid={{[_serial_number]}}&aem={{[your-email]}}') . '<br/>' . __('Tags inside double curly braces will be encrypted.','cf7-optin') .'</p>';
 	echo '<p class="point">' . sprintf(__('You have to set following lines on Additional Settings pane: %1$s and %2$s which is required by link validation mechanism.', 'cf7-optin') , cf7optin_elem('flamingo_email: "[your-email]"') , cf7optin_elem($subject_str)) . '</p>';
+
 	echo '</div>';
 }
+function cf7optin_manual_submission(){
+	
+	echo '<p>' . __('Enter Submission ID and submitter email and generate confirmation link. The ID can be found in Flamingo Inbound Messages as "serial_number". When using CFDB7 plugin the ID can be found in "Contact Forms" admin menu, when the submitted form is displayed as URL parameter "ufid".','cf7-optin');
+	$cf7optin_options = get_option('cf7optin_main_settings');
+	$test_aid = isset( $cf7optin_options['enc_txt'] ) ? esc_attr( $cf7optin_options['enc_txt'] ) : '';
+	$test_aem = isset( $cf7optin_options['enc_aem'] ) ? esc_attr( $cf7optin_options['enc_aem'] ) : '';
+	$result_str = ($test_aid !== '' || $test_aem !== '') ? 'aid=' . esc_attr(cf7optin_le_chiffre( $test_aid, true)) . '&aem=' . esc_attr(cf7optin_le_chiffre( $test_aem, true)) : __('No data entered.', 'cf7-optin');
+	echo '<div class="card fullwidth">';
+	echo '<p>' . __('You have to <strong>Save Settings</strong> after entering submission data to generate confirmation link.','cf7-optin');
+	echo '<p><label><strong style="width: 10em;display: inline-block;">' . __('Submission ID ', 'cf7-optin') . '</strong><input type="number" min="1" id="ecription_test_txt" name="cf7optin_main_settings[enc_txt] autocomplete="off" value="' .  $test_aid . '"></label></p>';
+	echo '<p><label><strong style="width: 10em;display: inline-block;">' . __('Submission email ', 'cf7-optin') . '</strong><input type="email" size="100" id="ecription_test_aem" name="cf7optin_main_settings[enc_aem] autocomplete="off" value="' .  $test_aem . '"></label></p>';
+	echo '<p><span class="cf7-optin-shortcode" onclick="cf7optinSelectNode(this);"><strong>' . __('Encrypted URL parameter: ', 'cf7-optin') . '</strong>' . $result_str . '</span></p>';
+	if ( __('No data entered.', 'cf7-optin') !== $result_str) {
+		echo '<p><a class="button" href="'. esc_url( home_url('/opt-in/?' . $result_str)) . '" target="_blank">' . __('Click to manually complete opt-in', 'cf7-optin') . '</a></p>'; 
+	}
+	echo '</div>';
+	echo '<br/>';
+	echo '<input name="submit1" class="button button-primary" type="submit" value="' . esc_attr__( 'Save settings', 'cf7-optin' ) .'" />';
+}
+
 /* 
 	END global options
 */
@@ -248,7 +363,7 @@ function cf7optinmain_help() {
 function action_wpcf7_admin_notices(  ) { 
 	if ((isset($_GET['page'] )&& $_GET['page'] === 'wpcf7-new') || (isset($_GET['page']) && $_GET['page'] === 'wpcf7' && isset($_GET['action']) && $_GET['action'] === 'edit')) {
 	echo '<div class="cf7optin-cf7-notice">';
-	echo '<p>' . __('You can make this form double opt in ready clicking the button below. This will add necessary shortcodes and settings to current form fields. You can move or wrap form and email shortcodes with HTML afterwards. Check help page for more details', 'cf7-optin') . '</p>';
+	echo '<p>' . sprintf(__('You can make this form double opt-in ready clicking the button below. This will add necessary shortcodes and settings to current form fields. You can move or wrap form and email shortcodes with HTML afterwards. Check the %s for more details.', 'cf7-optin'), '<a href="' . esc_url( admin_url('admin.php?page=wpcf7-optin#optin-help')) . '">' . __( 'help section on settings page', 'cf7-optin' )) . '</a></p>';
 	echo '<p><button id="cf7optin-maker" class="button button-primary">' . __('Make this Double Opt In form', 'cf7-optin') . '</button></p>';
 	echo '</div>';
 	}
@@ -451,7 +566,6 @@ function cf7optin_form_metabox() {
 */
 function cf7optin_attachment_metabox() {
 	global $post;
-	//wp_nonce_field(plugin_basename(__FILE__), 'cf7optin_attachment_nonce');
     $attached_file = get_post_meta($post->ID, '_final_attachment', true); 
 	if (!empty($attached_file)) {
 		$attached_filename = basename($attached_file['url']);
@@ -656,13 +770,15 @@ function cf7optin_display_cf7form_fields($selectedform){
 	preg_match_all('/(\[(.*?)?\](?:(.+?)?\[\/\])?)/', $cf7formbody, $matches, PREG_SET_ORDER);
 	foreach ($matches as $shortcode) {
 		$chunks = explode(' ' , $shortcode[0]);
-		$chunk_start = (trim($chunks[0] , '[]'));
-		$shortcode_name = trim($chunks[1] , '[]');
-		if (in_array($chunk_start, $allowed_shortcodes , true)) {
-			if (!in_array($shortcode_name, $shortcodes_found)) $shortcodes_found[] = $shortcode_name; //regular shortcodes
-		}
-		if (in_array($chunk_start, $attachment_shortcodes, true)) {
-			if (!in_array($shortcode_name, $files_found)) $files_found[] = $shortcode_name; //attachment shortcodes
+		if (!strpos($chunks[0], '/') ) {//skipping closing tags
+			$chunk_start = (trim($chunks[0] , '[]'));
+			$shortcode_name = trim($chunks[1] , '[]');
+			if (in_array($chunk_start, $allowed_shortcodes , true)) {
+				if (!in_array($shortcode_name, $shortcodes_found)) $shortcodes_found[] = $shortcode_name; //regular shortcodes
+			}
+			if (in_array($chunk_start, $attachment_shortcodes, true)) {
+				if (!in_array($shortcode_name, $files_found)) $files_found[] = $shortcode_name; //attachment shortcodes
+			}
 		}
 	}
 	if (count($shortcodes_found) > 0 ) {
@@ -844,3 +960,22 @@ function cf7optin_elem($elem) {
     }
 }
 add_action( 'admin_notices', 'display_flash_notices', 12 );
+
+/*
+*	Custom Flamingo Inbound Messages column 
+*	Shows confirmed and awaiting submissions
+*/
+function cf7optin_flamingo_columns( $columns ) {
+    $columns['accepted'] = __("Confirmation status", 'cf7-bon');
+    return $columns;
+}
+add_filter( 'manage_flamingo_inbound_posts_columns', 'cf7optin_flamingo_columns' );
+
+add_action('manage_flamingo_inbound_posts_custom_column', 'cf7optin_flamingo_status', 10, 2);
+function cf7optin_flamingo_status($column_name,$post_id) {
+  if ($column_name=='accepted') {
+    $status = get_post_meta( $post_id, '_accepted', true );
+	$status = ($status !== "1") ?  '<span style="color:red;font-weight:700;">' . _x('Not confirmed', 'Submission status', 'cf7-optin') .'</span>' : '<span style="color:darkgreen;font-weight:400;">' . _x('Sent', 'Submission status', 'cf7-optin') .'</span>' ;
+	echo $status;
+  }
+}

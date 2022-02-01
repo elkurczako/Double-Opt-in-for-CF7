@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Double opt-in for CF7\n"
-"POT-Creation-Date: 2021-09-03 10:48+0200\n"
-"PO-Revision-Date: 2021-09-03 10:50+0200\n"
+"POT-Creation-Date: 2022-01-28 14:39+0100\n"
+"PO-Revision-Date: 2022-01-28 14:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 "
 "|| n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: cf7-optin.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -22,36 +22,40 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: admin/cf7optin-admin.php:12
+#: admin/cf7optin-admin.php:13
 msgid "Double Opt-in Settings"
 msgstr "Ustawienia podwójnej zgody"
 
-#: admin/cf7optin-admin.php:33
+#: admin/cf7optin-admin.php:34
+#, php-format
 msgid ""
 "This is Double Opt-In ready form. For this feature to work set final emails "
-"in \"Double Opt-in Forms\" menu."
+"in %s menu."
 msgstr ""
 "Formularz przystosowany do obsługi podwójnej zgody. Aby ta funkcja działała, "
-"ustaw opcje końcowych wiadomości e-mail w menu \"Formularze z podwójną zgodą"
-"\"."
+"ustaw opcje końcowych wiadomości e-mail w menu %s."
 
-#: admin/cf7optin-admin.php:34
+#: admin/cf7optin-admin.php:34 admin/cf7optin-admin.php:381
+msgid "All Opt-In Forms"
+msgstr "Formularze z podwójną zgodą"
+
+#: admin/cf7optin-admin.php:35
 msgid "Enter the form title first!"
 msgstr "Najpierw wpisz tytuł formularza!"
 
-#: admin/cf7optin-admin.php:35
+#: admin/cf7optin-admin.php:36
 msgid "Your form has been updated with Double Opt In options!"
 msgstr "Twój formularz został uzupełniony opcjami podwójnej zgody!"
 
-#: admin/cf7optin-admin.php:36
+#: admin/cf7optin-admin.php:37
 msgid "Confirm email address "
 msgstr "Potwierdź adres e-mail "
 
-#: admin/cf7optin-admin.php:37
+#: admin/cf7optin-admin.php:38
 msgid "To finalize form submission - visit: "
 msgstr "Aby dokończyć przesyłanie formularza - przejdź na: "
 
-#: admin/cf7optin-admin.php:38
+#: admin/cf7optin-admin.php:39
 msgid ""
 "Important notice! You are about to replace existing encryption keys with new "
 "ones. If there are unfinished submissions pending, they can&apos;t be "
@@ -62,7 +66,7 @@ msgstr ""
 "oczekują niezatwierdzone formularze, już nie można będzie ich potwierdzić po "
 "zmianie kluczy!\n"
 
-#: admin/cf7optin-admin.php:41
+#: admin/cf7optin-admin.php:42
 msgid ""
 "New encryption keys are set. You have to save the settings for the change to "
 "take effect."
@@ -70,63 +74,132 @@ msgstr ""
 "Ustawiono nowe klucze szyfrowania. Musisz zapisać ustawienia, aby ta zmiana "
 "zaczęła obowiązywać."
 
-#: admin/cf7optin-admin.php:82
+#: admin/cf7optin-admin.php:77
 msgid "CF7 Double Opt-in Settings"
 msgstr "Ustawienia podwójnej zgody CF7"
 
-#: admin/cf7optin-admin.php:87
+#: admin/cf7optin-admin.php:83 admin/cf7optin-admin.php:353
 msgid "Save settings"
 msgstr "Zapisz ustawienia"
 
-#: admin/cf7optin-admin.php:98
+#: admin/cf7optin-admin.php:96
 msgid "General plugin settings"
 msgstr "Ogólne ustawienia wtyczki"
 
-#: admin/cf7optin-admin.php:104
+#: admin/cf7optin-admin.php:102 admin/cf7optin-admin.php:242
+msgid "Choose CF7 database plugin"
+msgstr "Wybierz wtyczkę zapisującą formularze CF7 do bazy danych."
+
+#: admin/cf7optin-admin.php:109
 msgid "Strings used to encrypt double opt in confirmation link"
 msgstr ""
 "Ciągi używane do szyfrowania linku potwierdzającego, który jest wysyłany do "
 "osoby wypełniającej formularz"
 
-#: admin/cf7optin-admin.php:111
+#: admin/cf7optin-admin.php:116
 msgid "How many hours to confirm with link in email before submission expires?"
 msgstr ""
 "Ilość godzin na potwierdzenie przesłania formularza. Po tym czasie nie "
 "będzie już można go zatwierdzić."
 
-#: admin/cf7optin-admin.php:118
+#: admin/cf7optin-admin.php:123
 msgid "Override display of standard file loading input"
 msgstr "Zastąp standardową kontrolkę ładowania plików"
 
-#: admin/cf7optin-admin.php:125
+#: admin/cf7optin-admin.php:130
 msgid "Enchance validation error messages"
 msgstr "Dodaj ulepszone komunikaty błędów formularza"
 
-#: admin/cf7optin-admin.php:132
+#: admin/cf7optin-admin.php:137
 msgid "Change the CSV separator to semicolon ( ; ) and set UTF-8 BOM encoding."
 msgstr "Zmień separator CSV na średnik ( ; ) i ustaw kodowanie UTF-8 BOM."
 
-#: admin/cf7optin-admin.php:139
+#: admin/cf7optin-admin.php:144
+msgid "Manual submission confirmation"
+msgstr "Ręczne potwierdzenie formularza"
+
+#: admin/cf7optin-admin.php:150
 msgid "Basic Doble Opt In help"
 msgstr "Podstawowa pomoc Formularzy z podwójną zgodą"
 
+#: admin/cf7optin-admin.php:162
+msgid "Double Opt-in for CF7 Settings updated successfully."
+msgstr "Ustawienia wtyczki Double Opt-in dla CF7 zaktualizowano pomyślnie."
+
 #: admin/cf7optin-admin.php:167
+msgid ""
+"Error. Contact Form 7 compatible database plugin must be set. Not changed."
+msgstr ""
+"Błąd. Należy ustawić wtyczkę bazy danych zgodną z CF7. Nie zmieniono "
+"ustawienia."
+
+#: admin/cf7optin-admin.php:174
+msgid "Error. Encryption keys must have a value. Setting not changed."
+msgstr ""
+"Błąd. Klucze szyfrowania muszą mieć wartość. Ustawienie nie zostało "
+"zmienione."
+
+#: admin/cf7optin-admin.php:183
+msgid ""
+"Warning. You have set expiration to ZERO hours. No double opt-in form will "
+"be confirmed!"
+msgstr ""
+"Ostrzeżenie. Ustawiłeś datę wygaśnięcia na ZERO godzin. Żaden formularz z "
+"podwójną zgodą nie zostanie potwierdzony!"
+
+#: admin/cf7optin-admin.php:186
+msgid "Error. Invalid expiration value!"
+msgstr "Błąd. Nieprawidłowa wartość wygaśnięcia!"
+
+#: admin/cf7optin-admin.php:194
+msgid "Error. Invalid checkbox value! No changes!"
+msgstr "Błąd. Nieprawidłowa wartość pola wyboru! Nie dokonano żadnych zmian!"
+
+#: admin/cf7optin-admin.php:204
+msgid ""
+"Error. Invalid Submission email entered for manual confirmation! This must "
+"be a valid email address."
+msgstr ""
+"Błąd. Nieprawidłowy adres e-mail zgłoszenia wprowadzony w celu ręcznego "
+"potwierdzenia!"
+
+#: admin/cf7optin-admin.php:211
+msgid ""
+"Error. Invalid Submission ID entered for manual confirmation! This must be "
+"integer value."
+msgstr ""
+"Błąd. Nieprawidłowy identyfikator zgłoszenia wprowadzony w celu ręcznego "
+"potwierdzenia! Musi to być liczba całkowita."
+
+#: admin/cf7optin-admin.php:218
+msgid "Settings update failure! No data to process."
+msgstr "Błąd aktualizacji ustawień! Brak danych do przetworzenia."
+
+#: admin/cf7optin-admin.php:244 admin/cf7optin-admin.php:247
+msgid "plugin installed"
+msgstr "zainstalowana"
+
+#: admin/cf7optin-admin.php:244 admin/cf7optin-admin.php:247
+msgid "plugin not installed"
+msgstr "wtyczka nie jest zainstalowana"
+
+#: admin/cf7optin-admin.php:260
 msgid "Encryption key"
 msgstr "Klucz szyfrowania"
 
-#: admin/cf7optin-admin.php:170
+#: admin/cf7optin-admin.php:263
 msgid "Encryption initialization vector"
 msgstr "Wektor inicjujący szyfrowanie"
 
-#: admin/cf7optin-admin.php:176
+#: admin/cf7optin-admin.php:269
 msgid "Auto generated Key: "
 msgstr "Automatycznie wygenerowany klucz: "
 
-#: admin/cf7optin-admin.php:177
+#: admin/cf7optin-admin.php:270
 msgid "Auto generated Initialization Vector: "
 msgstr "Automatycznie wygenerowany wektor inicjowania: "
 
-#: admin/cf7optin-admin.php:179
+#: admin/cf7optin-admin.php:272
 msgid ""
 "Copy those strings to Key and Initialization Vector fields below or enter "
 "your own encryption strings."
@@ -134,11 +207,11 @@ msgstr ""
 "Skopiuj te ciągi do pól klucza i wektora inicjowania poniżej lub wprowadź "
 "własne ciągi szyfrujące."
 
-#: admin/cf7optin-admin.php:180
+#: admin/cf7optin-admin.php:273
 msgid "Copy encryption keys"
 msgstr "Kopiuj klucze szyfrujące"
 
-#: admin/cf7optin-admin.php:181
+#: admin/cf7optin-admin.php:274
 msgid ""
 "Important! Changing the keys below when there are unaccepted opt-ins will "
 "make them unacceptable."
@@ -146,7 +219,7 @@ msgstr ""
 "Uwaga! Zmiana poniższych kluczy, gdy istnieją niezaakceptowane formularze , "
 "sprawi, że nie da się już ich zaakceptować."
 
-#: admin/cf7optin-admin.php:194
+#: admin/cf7optin-admin.php:287
 msgid ""
 "Standard file inputs will be replaced with more flexible element. New "
 "control shows file size information and allows to remove selected file from "
@@ -156,7 +229,7 @@ msgstr ""
 "elementem. Nowa kontrolka pokazuje informacje o rozmiarze pliku i pozwala "
 "usunąć wybrany plik. Można także zmienić jej wygląd za pomocą CSS."
 
-#: admin/cf7optin-admin.php:207
+#: admin/cf7optin-admin.php:300
 msgid ""
 "Sets more specific validation error texts for checkboxes and radios. This is "
 "small improvement of CF7 forms accessibility. Clear information is important "
@@ -168,32 +241,32 @@ msgstr ""
 "Czytelne informacje są ważne dla wszystkich, ale szczególnie dla osób "
 "korzystających z czytników ekranu lub dla osób z ASD. "
 
-#: admin/cf7optin-admin.php:208
+#: admin/cf7optin-admin.php:301
 msgid "Those texts are: "
 msgstr "Teksty to: "
 
-#: admin/cf7optin-admin.php:209 cf7-optin.php:156
+#: admin/cf7optin-admin.php:302 cf7-optin.php:152
 msgid "Choose at least one option."
 msgstr "Zaznacz przynajmniej jedną opcję."
 
-#: admin/cf7optin-admin.php:209
+#: admin/cf7optin-admin.php:302
 msgid " – as checkbox input validation error message."
 msgstr " – jako komunikat o błędzie pola checkbox."
 
-#: admin/cf7optin-admin.php:210 cf7-optin.php:174
+#: admin/cf7optin-admin.php:303 cf7-optin.php:170
 msgid "Chose one of the options."
 msgstr "Wymagane jest zaznaczenie którejś opcji."
 
-#: admin/cf7optin-admin.php:210
+#: admin/cf7optin-admin.php:303
 msgid " – as radio input validation error message."
 msgstr " – jako komunikat o błędzie pola radio."
 
-#: admin/cf7optin-admin.php:211
+#: admin/cf7optin-admin.php:304
 #, php-format
 msgid "Those messages can be changed by %1$s and %2$s filter hooks."
 msgstr "Wiadomości te można zmieniać za pomocą filtrów %1$s i %2$s."
 
-#: admin/cf7optin-admin.php:223
+#: admin/cf7optin-admin.php:316
 #, php-format
 msgid ""
 "This option applies to CSV file attachments generated by this plugin and to "
@@ -202,7 +275,7 @@ msgstr ""
 "Ta opcja dotyczy załączników CSV generowanych przez tę wtyczkę oraz plików "
 "CSV eksportowanych przez %s. "
 
-#: admin/cf7optin-admin.php:223
+#: admin/cf7optin-admin.php:316
 msgid ""
 "UTF-8 with BOM is useful when your form data contains language specific "
 "characters (e.g. ą, é, ç, ü),and you want to open your CSV files in MS "
@@ -215,15 +288,15 @@ msgstr ""
 "programami, więc użyj tej opcji tylko, gdy chcesz uzyskać kompatybilność z "
 "MS Excel."
 
-#: admin/cf7optin-admin.php:226
+#: admin/cf7optin-admin.php:319
 msgid "Enter your double opt-in form name here"
 msgstr "Nazwa formularza z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:228
+#: admin/cf7optin-admin.php:321
 msgid "What is double opt in and why use it:"
 msgstr "Co to jest podwójna zgoda i dlaczego jej używać:"
 
-#: admin/cf7optin-admin.php:229
+#: admin/cf7optin-admin.php:322
 msgid ""
 "Double opt-in is the safe way of receiving site visitor&apos;s submitted "
 "input. Used with contact forms or online questionnaires or with user "
@@ -248,11 +321,11 @@ msgstr ""
 "checkbox oraz dodatkowo potwierdzić swój adres e-mail. Nie zapomnij ustawić "
 "pola akceptacji w formularzu CF7, jeśli musisz zadbać o RODO!"
 
-#: admin/cf7optin-admin.php:230
+#: admin/cf7optin-admin.php:323
 msgid "How Double opt in form works:"
 msgstr "Jak działają formularze z podwójną zgodą:"
 
-#: admin/cf7optin-admin.php:231
+#: admin/cf7optin-admin.php:324
 msgid ""
 "When someone fills and submits a form with double opt in functionality "
 "<strong>the first CF7 email is end back to THEM</strong>. There is "
@@ -272,7 +345,7 @@ msgstr ""
 "wtyczce Flamingo i inicjuje wysyłanie końcowych wiadomości e-mail do "
 "odbiorcy podanego w ustawieniach \"Formularze z podwójną zgodą\"."
 
-#: admin/cf7optin-admin.php:232
+#: admin/cf7optin-admin.php:325
 msgid ""
 "If validation fails or when submission has expired, no emails are sent. If "
 "there are no specified parameters in url, wisitors of the \"opt-in\" page "
@@ -283,11 +356,11 @@ msgstr ""
 "adresie URL nie ma niezbędnych parametrów, odwiedzający stronę \"opt-in\" są "
 "przekierowywani na stronę \"404\"."
 
-#: admin/cf7optin-admin.php:233
+#: admin/cf7optin-admin.php:326
 msgid "Double Opt-in for CF7 requirements: "
-msgstr "Podwójna zgoda dla CF7 - wymagania:: "
+msgstr "Podwójna zgoda dla CF7 - wymagania: "
 
-#: admin/cf7optin-admin.php:234
+#: admin/cf7optin-admin.php:327
 #, php-format
 msgid ""
 "Double opt in requires %1$s and  %2$s plugins by %3$s to be installed and "
@@ -296,7 +369,7 @@ msgstr ""
 "Podwójna zgoda dla CF7 wymaga by wtyczki %1$s i %2$s napisane przez %3$s "
 "były zainstalowane i aktywne."
 
-#: admin/cf7optin-admin.php:235
+#: admin/cf7optin-admin.php:328
 msgid ""
 "For proper submitter email validation you should use following tags in your "
 "CF7 forms: "
@@ -304,17 +377,34 @@ msgstr ""
 "Aby uzyskać prawidłową weryfikację adresów e-mail osób wypełniających "
 "formularz, należy użyć następujących tagów w formularzach CF7: "
 
-#: admin/cf7optin-admin.php:235
+#: admin/cf7optin-admin.php:328
 msgid ""
-"That is important part because their email will be used for sending "
+" That is important part because their email will be used for sending "
 "confirmation link. Typo in email address means they will not be able to "
 "confirm and submit the form."
 msgstr ""
-"Jest to ważne, ponieważ ich e-mail będzie używany do wysyłania linku "
+" Jest to ważne, ponieważ ich e-mail będzie używany do wysyłania linku "
 "potwierdzającego. Literówka w adresie e-mail oznacza, że nie da się "
 "potwierdzić i przesłać formularza."
 
-#: admin/cf7optin-admin.php:236
+#: admin/cf7optin-admin.php:329
+msgid ""
+"For easy filtering accepted forms in CSV export files form your CF7 database "
+"plugin (e.g. Flamigo) you should use following tag in your CF7 forms: "
+msgstr ""
+"Aby ułatwić filtrowanie przesłanych formularzy w eksportach CSV z wtyczki "
+"przechowującej formularze CF7 w bazie danych (np. Flamigo), należy użyć "
+"następującego tagu w formularzach CF7: "
+
+#: admin/cf7optin-admin.php:329
+msgid ""
+" Submissions with field \"accepted\" set to value \"1\" are the properly "
+"doble opt-in validated ones."
+msgstr ""
+" Zgłoszenia z polem \"accepted\" ustawionym na wartość \"1\" są poprawnie "
+"zatwierdzone i przesłane."
+
+#: admin/cf7optin-admin.php:330
 #, php-format
 msgid ""
 "Double opt in requires %s tag to be set as email address of the first CF7 "
@@ -323,7 +413,7 @@ msgstr ""
 "Podwójna zgoda wymaga tagu %s ustawionego jako adres odbiorcy pierwszej "
 "wiadomości e-mail CF7."
 
-#: admin/cf7optin-admin.php:237
+#: admin/cf7optin-admin.php:331
 msgid ""
 "For doble opt-in to work correctly insert following confirmation link in "
 "first CF7 email: "
@@ -331,11 +421,11 @@ msgstr ""
 "Aby podwójna zgoda mogła być potwierdzona, wstaw w szablonie pierwszego "
 "maila CF7 następujący odnośnik: "
 
-#: admin/cf7optin-admin.php:237
+#: admin/cf7optin-admin.php:331
 msgid "Tags inside double curly braces will be encrypted."
 msgstr "Znaczniki wewnątrz podwójnych nawiasów klamrowych będą szyfrowane."
 
-#: admin/cf7optin-admin.php:238
+#: admin/cf7optin-admin.php:332
 #, php-format
 msgid ""
 "You have to set following lines on Additional Settings pane: %1$s and %2$s "
@@ -345,135 +435,177 @@ msgstr ""
 "oraz  %2$s. Są one niezbędne do weryfikacji linku potwierdzającego "
 "przesyłanego w pierwszej wiadomości e-mail ."
 
-#: admin/cf7optin-admin.php:251
+#: admin/cf7optin-admin.php:338
 msgid ""
-"You can make this form double opt in ready clicking the button below. This "
-"will add necessary shortcodes and settings to current form fields. You can "
-"move or wrap form and email shortcodes with HTML afterwards. Check help page "
-"for more details"
+"Enter Submission ID and submitter email and generate confirmation link. The "
+"ID can be found in Flamingo Inbound Messages as \"serial_number\". When "
+"using CFDB7 plugin the ID can be found in \"Contact Forms\" admin menu, when "
+"the submitted form is displayed as URL parameter \"ufid\"."
 msgstr ""
-"Możesz ustawić  ten formularz na obsługę podwójnej zgody, klikając poniższy "
-"przycisk. Spowoduje to dodanie niezbędnych tagów i ustawień do pól bieżącego "
-"formularza. Możesz później przenosić lub formatować tagi  formularza i e-"
-"mail za pomocą kodu HTML. Sprawdź stronę pomocy, aby uzyskać więcej "
-"informacji"
+"Wprowadź identyfikator wiadomości i adres e-mail wysyłającego i wygeneruj "
+"link potwierdzający. Identyfikator można znaleźć w Flamingo Inbound Messages "
+"jako \"serial_number\". Jeśli korzystasz z wtyczki CFDB7 identyfikator można "
+"znaleźć w menu administracyjnym \"Contact Forms\", - wyświetl formularz do "
+"zatwierdzenia i sprawdź parametr adresu URL \"ufid\" w pasku adresu "
+"przeglądaki."
 
-#: admin/cf7optin-admin.php:252
+#: admin/cf7optin-admin.php:342 admin/cf7optin-admin.php:348
+msgid "No data entered."
+msgstr "Nie wprowadzono żadnych danych."
+
+#: admin/cf7optin-admin.php:344
+msgid ""
+"You have to <strong>Save Settings</strong> after entering submission data to "
+"generate confirmation link."
+msgstr ""
+"Musisz <strong>zapisać ustawienia</strong> po wprowadzeniu danych "
+"przesyłania, aby wygenerować link potwierdzający."
+
+#: admin/cf7optin-admin.php:345
+msgid "Submission ID "
+msgstr "Identyfikator wiadomości "
+
+#: admin/cf7optin-admin.php:346
+msgid "Submission email "
+msgstr "Adres e-mail wysyłającego"
+
+#: admin/cf7optin-admin.php:347
+msgid "Encrypted URL parameter: "
+msgstr "Zaszyfrowany parametr URL: "
+
+#: admin/cf7optin-admin.php:349
+msgid "Click to manually complete opt-in"
+msgstr "Kliknij, aby ręcznie zatwierdzić formularz"
+
+#: admin/cf7optin-admin.php:366
+#, php-format
+msgid ""
+"You can make this form double opt-in ready clicking the button below. This "
+"will add necessary shortcodes and settings to current form fields. You can "
+"move or wrap form and email shortcodes with HTML afterwards. Check the %s "
+"for more details."
+msgstr ""
+"Możesz ustawić ten formularz na obsługę podwójnej zgody, klikając poniższy "
+"przycisk. Spowoduje to dodanie niezbędnych tagów i ustawień do pól bieżącego "
+"formularza. Możesz później przenosić lub formatować tagi formularza i e-mail "
+"za pomocą kodu HTML. Sprawdź %s, aby uzyskać więcej informacji"
+
+#: admin/cf7optin-admin.php:366
+msgid "help section on settings page"
+msgstr "sekcję pomocy na stronie ustawień"
+
+#: admin/cf7optin-admin.php:367
 msgid "Make this Double Opt In form"
 msgstr "Zmień na formularz z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:263
+#: admin/cf7optin-admin.php:378
 msgctxt "Post Type General Name"
 msgid "Opt-In Forms"
-msgstr "Wszystkie formularze z potwierdzeniem"
+msgstr "Wszystkie formularze z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:264
+#: admin/cf7optin-admin.php:379
 msgctxt "Post Type Singular Name"
 msgid "Opt-In Form"
 msgstr "Formularz  z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:265 admin/cf7optin-admin.php:274
+#: admin/cf7optin-admin.php:380 admin/cf7optin-admin.php:389
 msgid "Opt-In Forms"
-msgstr "Formularze z potwierdzeniem"
-
-#: admin/cf7optin-admin.php:266
-msgid "All Opt-In Forms"
 msgstr "Formularze z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:267
+#: admin/cf7optin-admin.php:382
 msgid "Add New Opt-In Form"
 msgstr "Dodaj nowy formularz z potwierdzeniem"
 
-#: admin/cf7optin-admin.php:268
+#: admin/cf7optin-admin.php:383
 msgid "Add New"
 msgstr "Dodaj nowy"
 
-#: admin/cf7optin-admin.php:269
+#: admin/cf7optin-admin.php:384
 msgid "Edit Opt-In Form"
 msgstr "Edytuj formularz z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:270
+#: admin/cf7optin-admin.php:385
 msgid "Update Opt-In Form"
 msgstr "Aktualizuj formularz z podwójną zgodą"
 
-#: admin/cf7optin-admin.php:275
+#: admin/cf7optin-admin.php:390
 msgid "Settings for CF7 Forms with double opt-in functionality"
 msgstr "Ustawienia formularzy CF7 z funkcją podwójnej zgody"
 
-#: admin/cf7optin-admin.php:305
+#: admin/cf7optin-admin.php:420
 msgid "Opt-In Form Settings"
 msgstr "Ustawienia formularza podwójnej zgody"
 
-#: admin/cf7optin-admin.php:314
+#: admin/cf7optin-admin.php:429
 msgid "Thank you attachments"
 msgstr "Załączniki do potwierdzenia"
 
-#: admin/cf7optin-admin.php:334 admin/cf7optin-admin.php:578
+#: admin/cf7optin-admin.php:449 admin/cf7optin-admin.php:692
 msgid "no CF7 form selected"
 msgstr "nie powiązano"
 
-#: admin/cf7optin-admin.php:346
+#: admin/cf7optin-admin.php:461
 msgid "Double Opt-In Form Settings"
 msgstr "Ustawienia formularzy podwójnej zgody"
 
-#: admin/cf7optin-admin.php:356
+#: admin/cf7optin-admin.php:471
 msgid "Choose the existing CF7 form"
 msgstr "Wybierz istniejący formularz CF7"
 
-#: admin/cf7optin-admin.php:360
+#: admin/cf7optin-admin.php:475
 msgid "Choose form"
 msgstr "Wybierz formularz"
 
-#: admin/cf7optin-admin.php:376
+#: admin/cf7optin-admin.php:491
 msgid "Send HTML emails?"
 msgstr "Wysyłać emaile HTML?"
 
-#: admin/cf7optin-admin.php:390
+#: admin/cf7optin-admin.php:505
 msgid "Attach csv file with form data?"
 msgstr "Załączyć plik csv z danymi formularza?"
 
-#: admin/cf7optin-admin.php:403
+#: admin/cf7optin-admin.php:518
 msgid "Final email address"
 msgstr "Ostateczny adres e-mail"
 
-#: admin/cf7optin-admin.php:403
+#: admin/cf7optin-admin.php:518
 msgid "The address your confirmed forms will be sent to"
 msgstr "Adres, na który poprawnie potwierdzone formularze zostaną wysłane"
 
-#: admin/cf7optin-admin.php:409
+#: admin/cf7optin-admin.php:524
 msgid "Final email subject"
 msgstr "Temat ostatecznej wiadomości e-mail"
 
-#: admin/cf7optin-admin.php:415
+#: admin/cf7optin-admin.php:530
 msgid "Final email attachments"
 msgstr "Załączniki ostatecznej wiadomości e-mail"
 
-#: admin/cf7optin-admin.php:415
+#: admin/cf7optin-admin.php:530
 msgid "Enter comma separated attachments tags if available."
 msgstr ""
 "Wpisz znaczniki załączników jeśli są dostępne. Rozdzielaj je przecinkami."
 
-#: admin/cf7optin-admin.php:421
+#: admin/cf7optin-admin.php:536
 msgid "Final email template"
 msgstr "Szablon ostatecznej wiadomości e-mail"
 
-#: admin/cf7optin-admin.php:421
+#: admin/cf7optin-admin.php:536
 msgid "Use available mail tags and format your final email."
 msgstr "Użyj dostępnych znaczników i sformatuj ostateczną wiadomość e-mail."
 
-#: admin/cf7optin-admin.php:427
+#: admin/cf7optin-admin.php:542
 msgid "Confirmation email subject"
 msgstr "Temat wiadomości e-mail z potwierdzeniem"
 
-#: admin/cf7optin-admin.php:433
+#: admin/cf7optin-admin.php:548
 msgid "Confirmation email template"
 msgstr "Szablon wiadomości e-mail z potwierdzeniem"
 
-#: admin/cf7optin-admin.php:433
+#: admin/cf7optin-admin.php:548
 msgid "Sent to email of person who submitted the original form."
 msgstr "Wysłane na adres e-mail osoby, która przesłała oryginalny formularz."
 
-#: admin/cf7optin-admin.php:440
+#: admin/cf7optin-admin.php:555
 msgid ""
 "Select existing CF7 form abowe and <strong>save</strong> to display double "
 "opt-in options for the form. <strong>Only forms without double opt-in "
@@ -483,15 +615,15 @@ msgstr ""
 "opcje podwójnej zgody. <strong>Wyświetlane są tylko formularze, które nie "
 "mają jeszcze ustawień podwójnej zgody.</strong>"
 
-#: admin/cf7optin-admin.php:458
+#: admin/cf7optin-admin.php:572
 msgid "Attached file: "
 msgstr "Załączony plik: "
 
-#: admin/cf7optin-admin.php:459
+#: admin/cf7optin-admin.php:573
 msgid "Remove attachment"
 msgstr "Usuń załącznik"
 
-#: admin/cf7optin-admin.php:462
+#: admin/cf7optin-admin.php:576
 msgid ""
 "Upload a file which will be attached to final confirmation email. This can "
 "be useful when you want to sent them e.g. ebook in exchange for filling the "
@@ -503,7 +635,7 @@ msgstr ""
 "wypełnienie formularza. Nadaje się do niewielkich plików! Dla większych "
 "lepiej podać w treści e-mail link do pobrania."
 
-#: admin/cf7optin-admin.php:510
+#: admin/cf7optin-admin.php:624
 msgid ""
 "You are trying to save settings for CF7 form already used! Please select "
 "another CF7 form or create new one."
@@ -511,19 +643,19 @@ msgstr ""
 "Próbujesz zapisać ustawienia dla już używanego formularza CF7 ! Wybierz inny "
 "formularz CF7 lub utwórz nowy."
 
-#: admin/cf7optin-admin.php:558
+#: admin/cf7optin-admin.php:672
 msgid "There was an error uploading your file. The error: "
 msgstr "Wystąpił błąd podczas przesyłania pliku. Błąd: "
 
-#: admin/cf7optin-admin.php:595
+#: admin/cf7optin-admin.php:709
 msgid "CF7 form"
 msgstr "Formularz CF7"
 
-#: admin/cf7optin-admin.php:669
+#: admin/cf7optin-admin.php:785
 msgid "Fields found in CF7 form: "
 msgstr "Pola znalezione w formularzu CF7: "
 
-#: admin/cf7optin-admin.php:673
+#: admin/cf7optin-admin.php:789
 msgid ""
 "You can use those fields in your email subject and template. <strong>Bold</"
 "strong> formatted fields are unused in your form."
@@ -531,19 +663,19 @@ msgstr ""
 "Możesz użyć tych pól w temacie i szablonie wiadomości e-mail. "
 "<strong>Pogrubione</strong> są pola nieużywane."
 
-#: admin/cf7optin-admin.php:676
+#: admin/cf7optin-admin.php:792
 msgid "File attachment fields found in CF7 form: "
 msgstr "Pola załączonych plików znalezione w formularzu CF7: "
 
-#: admin/cf7optin-admin.php:680
+#: admin/cf7optin-admin.php:796
 msgid "You can use those fields as attachments to your email"
 msgstr "Możesz użyć tych pól jako załączników do wiadomości e-mail"
 
-#: admin/cf7optin-admin.php:720
+#: admin/cf7optin-admin.php:836
 msgid "Finalize Submit"
 msgstr "Potwierdzenie wysłania formularza"
 
-#: admin/cf7optin-admin.php:736
+#: admin/cf7optin-admin.php:852
 msgid ""
 "Double opt-in for CF7 plugin – page with <strong>opt-in</strong> slug is "
 "already created!"
@@ -551,7 +683,7 @@ msgstr ""
 "\"Podwójna zgoda dla CF7\" - strona z bezpośrednim odnośnikiem <strong>opt-"
 "in</strong> jest już utworzona!"
 
-#: admin/cf7optin-admin.php:757
+#: admin/cf7optin-admin.php:873
 msgid ""
 "Attention! For Double opt-in for CF7 plugin to work properly you have to "
 "create page with <strong>opt-in</strong> slug!"
@@ -559,51 +691,51 @@ msgstr ""
 "Uwaga! Aby \"Podwójna zgoda dla CF7\" działała poprawnie, musisz utworzyć "
 "stronę z bezpośrednim odnośnikiem <strong>opt-in</strong>!"
 
-#: admin/cf7optin-admin.php:758
+#: admin/cf7optin-admin.php:874
 msgid "Create confirmation page"
 msgstr "Utwórz stronę potwierdzenia"
 
-#: admin/cf7optin-admin.php:768
+#: admin/cf7optin-admin.php:884
 msgctxt "WP post status"
 msgid "publish"
 msgstr "Opublikowany"
 
-#: admin/cf7optin-admin.php:771
+#: admin/cf7optin-admin.php:887
 msgctxt "WP post status"
 msgid "draft"
 msgstr "Szkic"
 
-#: admin/cf7optin-admin.php:774
+#: admin/cf7optin-admin.php:890
 msgctxt "WP post status"
 msgid "future"
 msgstr "Zaplanowany"
 
-#: admin/cf7optin-admin.php:777
+#: admin/cf7optin-admin.php:893
 msgctxt "WP post status"
 msgid "pending"
 msgstr "Oczekujący na przegląd"
 
-#: admin/cf7optin-admin.php:780
+#: admin/cf7optin-admin.php:896
 msgctxt "WP post status"
 msgid "private"
 msgstr "Prywatny"
 
-#: admin/cf7optin-admin.php:783
+#: admin/cf7optin-admin.php:899
 msgctxt "WP post status"
 msgid "trash"
 msgstr "Przeniesiony do kosza"
 
-#: admin/cf7optin-admin.php:786
+#: admin/cf7optin-admin.php:902
 msgctxt "WP post status"
 msgid "auto-draft"
 msgstr "Automatycznie zapisany szkic"
 
-#: admin/cf7optin-admin.php:789
+#: admin/cf7optin-admin.php:905
 msgctxt "WP post status"
 msgid "inherit"
 msgstr "dziedziczony"
 
-#: admin/cf7optin-admin.php:793
+#: admin/cf7optin-admin.php:909
 #, php-format
 msgid ""
 "Attention! For Double opt-in for CF7 to work properly the confirmation page "
@@ -614,53 +746,49 @@ msgstr ""
 "bezpośrednim odnośnikiem <strong>opt-in</strong> musi być "
 "<strong>opublikowana</strong>. Wykryto, że strona istnieje, ale ma status %s."
 
-#: assets/optin-settings-class.php:19
-#, php-format
-msgid "Your form with subject %s has beeen submitted"
-msgstr "Potwierdzenie przesłania formularza %s"
+#: admin/cf7optin-admin.php:969
+msgid "Confirmation status"
+msgstr "Status potwierdzenia"
 
-#: assets/optin-settings-class.php:24
-msgid "Sender: "
-msgstr "Nadawca: "
+#: admin/cf7optin-admin.php:978
+msgctxt "Submission status"
+msgid "Not confirmed"
+msgstr "Niepotwierdzony"
 
-#: assets/optin-settings-class.php:25
-msgid "Subject: "
-msgstr "Tytuł: "
+#: admin/cf7optin-admin.php:978
+msgctxt "Submission status"
+msgid "Sent"
+msgstr "Wysłane"
 
-#: assets/optin-settings-class.php:27
-msgid "Message:"
-msgstr "Wiadomość:"
-
-#: assets/optin-settings-class.php:32
-#, php-format
+#: cf7-optin.php:50
 msgid ""
-"This email confirms that we have received message with subject %1$s sent by "
-"%2$s from email %3$s"
+"Sorry, but Double opt-in for CF7 Add-on requires the <a href=\"https://"
+"wordpress.org/plugins/contact-form-7/\"><strong>Contact Form 7</strong></a> "
+"plugin to be installed and active."
 msgstr ""
-"Ten e-mail potwierdza, że otrzymaliśmy wiadomość %1$s wysłaną przez %2$s z "
-"adresu e-mail %3$s"
+"Uwaga. Podwójna zgoda dla CF7 wymaga by wtyczka <a href=\"https://wordpress."
+"org/plugins/contact-form-7/\"><strong>Contact Form 7</strong></a> była "
+"zainstalowana i aktywna."
 
-#: cf7-optin.php:48
+#: cf7-optin.php:60
 msgid ""
-"Sorry, but Double opt-in for CF7 Addon requires the <strong>Conatct Form 7</"
-"strong> plugin to be installed and active."
+"Sorry, but Double opt-in for CF7 Add-on requires the <a href=\"https://"
+"wordpress.org/plugins/flamingo/\"><strong>Flamingo</strong></a> or <a href="
+"\"https://wordpress.org/plugins/contact-form-cfdb7/\"><strong>Contact Form 7 "
+"Database Add-on – CFDB7</strong></a> plugin to be installed and active. "
+"Install one of those plugins before setting up double-opt in forms."
 msgstr ""
-"Uwaga. Podwójna zgoda dla CF7 wymaga by wtyczka <strong>Conatct Form 7</"
-"strong> była zainstalowana i aktywna."
+"Uwaga. Podwójna zgoda dla CF7 wymaga by wtyczka <a href=\"https://pl."
+"wordpress.org/plugins/flamingo/\"><strong>Flamingo<a href=\"https://pl."
+"wordpress.org/plugins/contact-form-cfdb7/\"><strong>Contact Form 7 Database "
+"Add-on – CFDB7</strong></a> była zainstalowana i aktywna. Zainstaluj jedną z "
+"tych wtyczek zanim zaczniesz ustawiać opcje podwójnej zgody w formularzach."
 
-#: cf7-optin.php:64
-msgid ""
-"Sorry, but Double opt-in for CF7 Addon requires the <strong>Flamingo</"
-"strong> plugin to be installed and active."
-msgstr ""
-"Uwaga. Podwójna zgoda dla CF7 wymaga by wtyczka <strong>Flamingo</strong> "
-"była zainstalowana i aktywna."
-
-#: cf7-optin.php:71
+#: cf7-optin.php:67
 msgid "Attention! Invalid data in the field above!"
 msgstr "Uwaga! Nieprawidłowe dane w powyższym polu!"
 
-#: cf7-optin.php:72
+#: cf7-optin.php:68
 msgctxt "Do not translate \"#your-email\""
 msgid ""
 "Attention! Email address is different than <a href=\"#your-email\">address "
@@ -669,7 +797,7 @@ msgstr ""
 "Uwaga! Adres e-mail różni się od <a href=\"#your-email\">adresu podanego "
 "powyżej</a>. Sprawdź oba pola adresu e-mail."
 
-#: cf7-optin.php:73
+#: cf7-optin.php:69
 msgctxt "Do not translate \"#confirm-email\""
 msgid ""
 "Attention! Email address is different than <a href=\"#confirm-email"
@@ -678,45 +806,45 @@ msgstr ""
 "Uwaga! Adres e-mail różni się od <a href=\"#confirm-email\">adresu podanego "
 "poniżej.</a> Sprawdź oba pola adresu."
 
-#: cf7-optin.php:74
+#: cf7-optin.php:70
 msgid "Attention! Invalid email address!"
 msgstr "Uwaga! Nieprawidłowy adres e-mail!"
 
-#: cf7-optin.php:88
+#: cf7-optin.php:84
 msgid "Select file"
 msgstr "Wybierz plik"
 
-#: cf7-optin.php:89
+#: cf7-optin.php:85
 msgctxt "For filename to upload"
 msgid "Selected: "
 msgstr "Wybrany: "
 
-#: cf7-optin.php:90
+#: cf7-optin.php:86
 msgctxt "the size of the file to upload"
 msgid "size: "
 msgstr "rozmiar: "
 
-#: cf7-optin.php:91
+#: cf7-optin.php:87
 msgid "Remove file"
 msgstr "Usuń plik"
 
-#: cf7-optin.php:92
+#: cf7-optin.php:88
 msgid "No file selected"
 msgstr "Nie wybrano pliku"
 
-#: cf7-optin.php:133
+#: cf7-optin.php:129
 msgid "Email addresses should not differ! Check the confirmation email!"
 msgstr ""
 "Adresy e-mail nie powinny się różnić! Sprawdź poprawność powtórzonego adresu "
 "e-mail!"
 
-#: cf7-optin.php:247
+#: cf7-optin.php:243
 msgid "Error. Something went really wrong! No required parameters found!"
 msgstr ""
 "Błąd. Coś poszło całkiem nie tak, jak powinno! Nie znaleziono wymaganych "
 "parametrów!"
 
-#: cf7-optin.php:271
+#: cf7-optin.php:276
 #, php-format
 msgid ""
 "Error. This document has expired and can not be approved. More than %d hours "
@@ -725,25 +853,25 @@ msgstr ""
 "Błąd. Data ważności tego dokumentu skończyła się. Minęło więcej niż %d "
 "godziny od jego wysłania i nie można go już zatwierdzić."
 
-#: cf7-optin.php:275
+#: cf7-optin.php:279
 msgid "Error. This document has been already approved."
 msgstr "Błąd. Ten dokument został już raz zatwierdzony."
 
-#: cf7-optin.php:278
+#: cf7-optin.php:281
 #, php-format
 msgid "Document %1$s found."
 msgstr "Znaleziono dokument %1$s ."
 
-#: cf7-optin.php:287
+#: cf7-optin.php:291
 msgid "Error. There is no document to approve."
 msgstr "Błąd. Nie znaleziono dokumentu do zatwierdzenia."
 
-#: cf7-optin.php:373
+#: cf7-optin.php:406
 #, php-format
 msgid "Your document has %d attachment files. "
 msgstr "Plików załączonych z dokumentem: %d. "
 
-#: cf7-optin.php:379
+#: cf7-optin.php:412
 #, php-format
 msgid "<p>This document has %d attachment: %s</p>"
 msgid_plural "<p>This document has %d attachments: %s</p>"
@@ -751,7 +879,7 @@ msgstr[0] "<p>Ten dokument zawiera %d załącznik: %s</p>"
 msgstr[1] "<p>Ten dokument zawiera %d załączniki: %s</p>"
 msgstr[2] "<p>Ten dokument zawiera %d załączników: %s</p>"
 
-#: cf7-optin.php:383
+#: cf7-optin.php:416
 msgid ""
 "There was a problem with sending submitted files! Submission is valid but "
 "could not be approved. Please contact the site administrator."
@@ -760,11 +888,11 @@ msgstr ""
 "formularza jest poprawne, ale nie można go zatwierdzić. Skontaktuj się z "
 "administratorem witryny."
 
-#: cf7-optin.php:390
+#: cf7-optin.php:430
 msgid "Thank you. Your submission has been approved and sent properly."
 msgstr "Dziękujemy. Twój dokument został przesłany poprawnie."
 
-#: cf7-optin.php:393
+#: cf7-optin.php:437
 msgid ""
 "Your submission has been approved but there was an error while processing "
 "data. Please contact the site administrator."
@@ -773,7 +901,7 @@ msgstr ""
 "przetwarzania danych. Skontaktuj się z administratorem witryny aby "
 "potwierdzić przesłanie danych."
 
-#: cf7-optin.php:408
+#: cf7-optin.php:459
 msgid ""
 "Your submission has been approved but there was an error while sending "
 "confirmation message. Please contact the site administrator."
@@ -782,13 +910,21 @@ msgstr ""
 "wiadomości z potwierdzeniem. Skontaktuj się z administratorem witryny aby "
 "potwierdzić przesłanie danych."
 
-#: cf7-optin.php:419
+#: cf7-optin.php:472
 msgid ""
-"There was an error while processing your data. Please contact the site "
-"administrator."
+"There was an error sending final email with your data. Please contact the "
+"site administrator."
 msgstr ""
-"Wystąpił błąd podczas przetwarzania danych. Skontaktuj się z administratorem "
-"witryny."
+"Wystąpił błąd podczas wysyłania ostatecznej wiadomości e-mail. Skontaktuj "
+"się z administratorem witryny."
+
+#: cf7-optin.php:475
+msgid ""
+"There was an error while processing your data. Form settings could not be "
+"found. Please contact the site administrator."
+msgstr ""
+"Wystąpił błąd podczas przetwarzania danych. Nie odnaleziono ustawień dla "
+"tego formularza. Skontaktuj się z administratorem witryny."
 
 #. Plugin Name of the plugin/theme
 msgid "Double opt-in for CF7"
@@ -802,14 +938,45 @@ msgstr "https://sirta.pl"
 #. Description of the plugin/theme
 msgid ""
 "Additional validation and functionality to Contact Form 7 plugin. Extended "
-"validation and double opt-in. Adds custom CSS to CF7 forms."
+"validation and double opt-in."
 msgstr ""
 "Dodatkowa funkcjonalność wtyczki Contact Form 7. Rozszerzona walidacja i "
-"podwójna zgoda. Dodaje własne style CSS do formularzy CF7."
+"wysyłka formularzy z podwójną zgodą."
 
 #. Author of the plugin/theme
 msgid "Krzysztof Busłowicz"
 msgstr "Krzysztof Busłowicz"
+
+#~ msgid "Manually entered submission ID (serial_number) and email"
+#~ msgstr "Ręcznie wprowadzony identyfikator wiadomości i adres e-mail"
+
+#, php-format
+#~ msgid "Your form with subject %s has beeen submitted"
+#~ msgstr "Potwierdzenie przesłania formularza %s"
+
+#~ msgid "Sender: "
+#~ msgstr "Nadawca: "
+
+#~ msgid "Subject: "
+#~ msgstr "Tytuł: "
+
+#~ msgid "Message:"
+#~ msgstr "Wiadomość:"
+
+#, php-format
+#~ msgid ""
+#~ "This email confirms that we have received message with subject %1$s sent "
+#~ "by %2$s from email %3$s"
+#~ msgstr ""
+#~ "Ten e-mail potwierdza, że otrzymaliśmy wiadomość %1$s wysłaną przez %2$s "
+#~ "z adresu e-mail %3$s"
+
+#~ msgid ""
+#~ "Sorry, but Double opt-in for CF7 Addon requires the <strong>Flamingo</"
+#~ "strong> plugin to be installed and active."
+#~ msgstr ""
+#~ "Uwaga. Podwójna zgoda dla CF7 wymaga by wtyczka <strong>Flamingo</strong> "
+#~ "była zainstalowana i aktywna."
 
 #~ msgid "How to format emails?"
 #~ msgstr "Jak formatować wiadomości e-mail?"
@@ -837,6 +1004,3 @@ msgstr "Krzysztof Busłowicz"
 
 #~ msgid "Important!"
 #~ msgstr "Ważne!"
-
-#~ msgid "Submit Confirmation"
-#~ msgstr "Prześlij potwierdzenie"

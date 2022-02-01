@@ -6,6 +6,7 @@
 	border:1px solid lightgray;
 	padding:5px;font-weight:700;
 	white-space:nowrap;
+	margin-right: 0.2em;
 }
 .cf7optin-used {
     font-weight: 400;
@@ -59,7 +60,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #666666;
+  background-color: #b7b7b7;
   -webkit-transition: .4s;
   transition: .4s;
 }

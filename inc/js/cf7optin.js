@@ -60,6 +60,7 @@
  });
  
  //adds required attribute to elements with "cf7req" class
+ //adds pattern to fields identified as telephone numbers
  function addMissingAttributes() {
 	 var $requiredInputs = document.querySelectorAll('.cf7req');
 	 if ($requiredInputs !== null) {
@@ -67,6 +68,12 @@
 			 $requiredInputs[i].setAttribute('required', 'true');
 		 }
 	 }
+	 var tel_fields = document.querySelectorAll('[autocomplete="tel"]');
+	if (tel_fields !== null) {
+		for (var i = 0; i < tel_fields.length; i++) {
+			tel_fields[i].setAttribute('pattern', '^[- +()]*[0-9][- +()0-9]*$');
+		}
+	}
  }
  
  //copies confirmation email value from email field
@@ -96,7 +103,7 @@ function copyEmailValue(previousel, currentel) {
 	clearWarnings(currentel);
 	if (previousel.value !== null && previousel.value !== '') {
 		let isEmail = checkEmailValue(previousel.value);
-		currentel.value = previousel.value;
+		//currentel.value = previousel.value;
 		if (isEmail === 'notemail') {
 			if (previousel.validationMessage !== "invalidemail") {
 				displayNotValidTip(previousel, 'notemail');

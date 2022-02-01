@@ -6,24 +6,28 @@
  
  docReady(function() {
 	cf7optinUploadHandle();
+	document.addEventListener('wpcf7mailsent', removeAllFileUploads,true);
  });
  
  
  
  /* fires observer for inputs [type="file"]
 *  checks on load if there already is file objects array on input 
-*  in case of simple refreshing page with filled formy */
+*  in case of simple refreshing page with filled form */
 function cf7optinUploadHandle() {
-	var uploadInputs = document.querySelectorAll("input[type=file]");
-	if(uploadInputs.length > 0) {
-		for (var i = 0; i < uploadInputs.length; i++) {
-			if (uploadInputs[i].hasAttribute("id") === false) uploadInputs[i].setAttribute('id', uploadInputs[i].name);
-				
-			overwriteDefaultInput(uploadInputs[i]);
-			uploadInputs[i].addEventListener('change', displayFileInfo,true);
-			var evt = document.createEvent("HTMLEvents");
-			evt.initEvent("change", false, true);
-			uploadInputs[i].dispatchEvent(evt);
+	let cf7Form = document.querySelector(".wpcf7-form");
+	if (cf7Form !== null) { // we need to change CF7 inputs only 
+		var uploadInputs = cf7Form.querySelectorAll("input[type=file]");
+		if(uploadInputs.length > 0) {
+			for (var i = 0; i < uploadInputs.length; i++) {
+				if (uploadInputs[i].hasAttribute("id") === false) uploadInputs[i].setAttribute('id', uploadInputs[i].name);
+					
+				overwriteDefaultInput(uploadInputs[i]);
+				uploadInputs[i].addEventListener('change', displayFileInfo,true);
+				var evt = document.createEvent("HTMLEvents");
+				evt.initEvent("change", false, true);
+				uploadInputs[i].dispatchEvent(evt);
+			}
 		}
 	}
 }
@@ -107,17 +111,19 @@ function displayFileInfo() {
 *	created right next to input down the DOM tree
 */
 function addFileRemover(node, fileInfo, arefiles = false) {
-	container = node.parentNode;
-	const btn = document.createElement("button");
-	btn.setAttribute("type", "button");
-	if ( arefiles ) {
-		btn.innerHTML = '<span aria-hidden="true">' + cf7optinInput.RemoveFile + '</span><span class="sr-only">' + cf7optinInput.RemoveFile + fileInfo + '</span>' ;
-		btn.className = 'file-upload';
-	} else {
-		btn.innerHTML = cf7optinInput.NoFileSelected;
-		btn.className = 'nofileselected';
+	if (node !== null){
+		container = node.parentNode;
+		const btn = document.createElement("button");
+		btn.setAttribute("type", "button");
+		if ( arefiles ) {
+			btn.innerHTML = '<span aria-hidden="true">' + cf7optinInput.RemoveFile + '</span><span class="sr-only">' + cf7optinInput.RemoveFile + fileInfo + '</span>' ;
+			btn.className = 'file-upload';
+		} else {
+			btn.innerHTML = cf7optinInput.NoFileSelected;
+			btn.className = 'nofileselected';
+		}
+		container.insertBefore(btn, node.nextSibling );
 	}
-	container.insertBefore(btn, node.nextSibling );
 }
 
 /*	Resets FileList object for input  
@@ -139,3 +145,27 @@ function removeFileUpload() {
 		this.remove();
 	}
 }
+
+/*	Resets all inputs with files
+* 	right after succesful form submit and mails sent
+*/
+function removeAllFileUploads() {
+	let labels = document.querySelectorAll('label.file-selected');
+	let finput = null ;
+	for (var i = 0; i < labels.length; i++) {
+		upload = labels[i].querySelector("input[type=file]");
+		if (upload !== null) {
+			upload.value = '';
+			labels[i].removeChild(labels[i].firstChild);
+			let newText = document.createTextNode(cf7optinInput.LabelDefaultText);
+			labels[i].insertBefore(newText, labels[i].firstChild);
+			labels[i].classList.remove('file-selected');
+			labels[i].focus();
+			
+			let remover = labels[i].nextSibling;
+			addFileRemover(remover, '', false);
+			remover.remove();
+		}
+	}
+}
+		

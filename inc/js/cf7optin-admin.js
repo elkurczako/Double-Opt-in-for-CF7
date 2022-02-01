@@ -1,4 +1,5 @@
-/* Double opt-in for CF7 admin scripts
+/* 	Double opt-in for CF7 admin scripts
+*	version 1.0
 */
 
 //Handles DOM loading without jQuery
@@ -97,7 +98,7 @@ function cf7optinFillTheForm(){
 	
 	let confirmMsg = cf7optinAdminText.ConfirmEmail;
 	let optinMsg = cf7optinAdminText.FinalizeSubmission;
-	form.value += '\r\n' + '<label>' + confirmMsg + '[email confirm-email]</label>';
+	form.value += '\r\n' + '<label>' + confirmMsg + '[email* confirm-email]</label>';
 	form.value += '\r\n' + '[hidden accepted default:"0"]';
 	email.value += '\r\n' + optinMsg + optinUrl;
 	recipient.value = '[your-email]';
