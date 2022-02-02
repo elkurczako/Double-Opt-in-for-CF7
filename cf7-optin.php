@@ -2,10 +2,9 @@
 /*
  * 	Plugin Name: Double opt-in for CF7
 	Plugin URI: https://sirta.pl
-	Description: Additional validation and functionality to Contact Form 7 plugin. Extended validation and double opt-in.
+	Description: Additional validation and double opt-in functionality for Contact Form 7 plugin.
 	Version: 1.0.0
 	Author: Krzysztof Busłowicz
-	Author URI: https://sirta.pl
 	Text Domain: cf7-optin
 	Domain Path: /languages/
 	License:     GPL
@@ -47,7 +46,7 @@ function cf7optin_is_cf7_active() {
 }
 add_action( 'admin_init', 'cf7optin_is_cf7_active' );
 function cf7optin_cf7plugin_notice(){
-    ?><div class="error"><p><?php _e('Sorry, but Double opt-in for CF7 Add-on requires the <a href="https://wordpress.org/plugins/contact-form-7/"><strong>Contact Form 7</strong></a> plugin to be installed and active.', 'cf7-optin'); ?></p></div><?php
+    ?><div class="error"><p><?php printf(esc_html_x('Sorry, but Double opt-in for CF7 Add-on requires the %1$s plugin to be installed and active.', 'plugin repository link', 'cf7-optin'), '<a href="https://wordpress.org/plugins/contact-form-7/">Contact Form 7</a>' ); ?></p></div><?php
 }
 
 function cf7optin_is_cf7db_active() {
@@ -57,17 +56,17 @@ function cf7optin_is_cf7db_active() {
 }
 add_action( 'admin_init', 'cf7optin_is_cf7db_active' );
 function cf7optin_database_notice(){
-    ?><div class="error"><p><?php _e('Sorry, but Double opt-in for CF7 Add-on requires the <a href="https://wordpress.org/plugins/flamingo/"><strong>Flamingo</strong></a> or <a href="https://wordpress.org/plugins/contact-form-cfdb7/"><strong>Contact Form 7 Database Add-on – CFDB7</strong></a> plugin to be installed and active. Install one of those plugins before setting up double-opt in forms.', 'cf7-optin'); ?></p></div><?php
+    ?><div class="error"><p><?php printf(esc_html_x('Sorry, but Double opt-in for CF7 Add-on requires the %1$s or %2$s plugin to be installed and active. Install one of those plugins before setting up double-opt in forms.', 'Famingo and CFDB7 links', 'cf7-optin'), '<a href="https://wordpress.org/plugins/flamingo/">Flamingo</a>', '<a href="https://wordpress.org/plugins/contact-form-cfdb7/">Contact Form 7 Database Add-on – CFDB7</a>'); ?></p></div><?php
 }
 
 
 /* Registering frontend scripts and styles */
 function cf7optin_enqueue() {
 	$cf7optin_js_strings = array(
-	'DefaultlWarning'		=> __('Attention! Invalid data in the field above!', 'cf7-optin'),
-	'SecondEmailWarning'	=> _x('Attention! Email address is different than <a href="#your-email">address set above</a>. Check both fields for valid email.', 'Do not translate "#your-email"', 'cf7-optin'),
-	'FirstEmailWarning'		=> _x('Attention! Email address is different than <a href="#confirm-email">confirmation address set below</a>. Check both fields for valid email.', 'Do not translate "#confirm-email"', 'cf7-optin'),
-	'NotEmailWarning'		=> __('Attention! Invalid email address!', 'cf7-optin')
+	'DefaultlWarning'		=> esc_html__('Attention! Invalid data in the field above!', 'cf7-optin'),
+	'SecondEmailWarning'	=> esc_html__('Attention! This email address is different than the address entered above. Check both fields for valid email.', 'cf7-optin'),
+	'FirstEmailWarning'		=> esc_html__('Attention! Email address is different than confirmation address entered below. Check both fields for valid email.', 'cf7-optin'),
+	'NotEmailWarning'		=> esc_html__('Attention! Invalid email address!', 'cf7-optin')
 	);
 			
 	wp_register_script( 'cf7optin-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin.js', array(), '1.0');
@@ -81,11 +80,11 @@ function cf7optin_enqueue() {
 	if ($cf7optin_inputs === 'true') {
 		wp_register_script( 'cf7optin-input-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin-fileinput.js', array(), '1.0');
 		$cf7optin_js_fileinput_strings = array(
-			'LabelDefaultText'		=> __('Select file', 'cf7-optin'),
-			'SelectedFile'	=> _x('Selected: ', 'For filename to upload', 'cf7-optin'),
-			'SelectedSize'		=> _x('size: ', 'the size of the file to upload', 'cf7-optin'),
-			'RemoveFile'		=> __('Remove file', 'cf7-optin'),
-			'NoFileSelected'		=> __('No file selected', 'cf7-optin')
+			'LabelDefaultText'		=> esc_html__('Select file', 'cf7-optin'),
+			'SelectedFile'	=> esc_html_x('Selected: ', 'For filename to upload', 'cf7-optin'),
+			'SelectedSize'		=> esc_html_x('size: ', 'the size of the file to upload', 'cf7-optin'),
+			'RemoveFile'		=> esc_html__('Remove file', 'cf7-optin'),
+			'NoFileSelected'		=> esc_html__('No file selected', 'cf7-optin')
 		);
 		wp_localize_script( 'cf7optin-input-js', 'cf7optinInput', $cf7optin_js_fileinput_strings);
 		wp_enqueue_script( 'cf7optin-input-js' );
@@ -122,11 +121,11 @@ add_filter( 'wpcf7_validate_email*', 'cf7optin_email_confirmation_validation_fil
   
 function cf7optin_email_confirmation_validation_filter( $result, $tag ) {
 if ( 'confirm-email' == $tag->name ) {
-	$your_email = isset( $_POST['your-email'] ) ? trim( $_POST['your-email'] ) : '';
-	$confirm_email = isset( $_POST['confirm-email'] ) ? trim( $_POST['confirm-email'] ) : '';
+	$your_email = isset( $_POST['your-email'] ) ? sanitize_text_field(trim( $_POST['your-email'] )) : '';
+	$confirm_email = isset( $_POST['confirm-email'] ) ? sanitize_text_field(trim( $_POST['confirm-email'] )) : '';
   
     if ( $your_email != $confirm_email ) {
-		$result->invalidate( $tag, __("Email addresses should not differ! Check the confirmation email!", 'cf7-optin') );
+		$result->invalidate( $tag, esc_html__("Email addresses should not differ! Check the confirmation email!", 'cf7-optin') );
 		}
   }
   return $result;
@@ -145,11 +144,11 @@ function cf7optin_checkbox_validation_filter( $result, $tag ) {
 	if ($cf7optin_msg === 'true') {
 		$name = $tag->name;
 		$is_required = $tag->is_required() || 'checkbox' == $tag->type;
-		$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
+		$value = isset( $_POST[$name] ) ? (array) sanitize_text_field($_POST[$name]) : array();
 
 		if ( $is_required and empty( $value ) ) {
 			//filter to customize error message 
-			$message = apply_filters('cf7optin_checkbox_error_msg',  __( 'Choose at least one option.', 'cf7-optin' ));
+			$message = apply_filters('cf7optin_checkbox_error_msg',  esc_html__( 'Choose at least one option.', 'cf7-optin' ));
 			$result->invalidate( $tag,$message);
 		}
 	}
@@ -163,11 +162,11 @@ function cf7optin_radio_validation_filter( $result, $tag ) {
 	if ($cf7optin_msg === 'true') {
 		$name = $tag->name;
 		$is_required = $tag->is_required() || 'radio' == $tag->type;
-		$value = isset( $_POST[$name] ) ? (array) $_POST[$name] : array();
+		$value = isset( $_POST[$name] ) ? (array) sanitize_text_field($_POST[$name]) : array();
 
 		if ( $is_required and empty( $value ) ) {
 			//filter to customize error message 
-			$message = apply_filters('cf7optin_radio_error_msg', __( 'Chose one of the options.', 'cf7-optin' ) );
+			$message = apply_filters('cf7optin_radio_error_msg', esc_html__( 'Chose one of the options.', 'cf7-optin' ) );
 			$result->invalidate( $tag, $message );
 		}
 	}
@@ -222,8 +221,8 @@ add_action('template_redirect', 'cf7optin_check_opt_in_params', 1);
 function cf7optin_get_url_params() {
 	$aid = '';
 	$aem = '';
-	if (isset($_GET['aid'])) $aid = $_GET['aid'];
-	if (isset($_GET['aem'])) $aem = $_GET['aem'];
+	if (isset($_GET['aid'])) $aid = sanitize_text_field($_GET['aid']);
+	if (isset($_GET['aem'])) $aem = sanitize_text_field($_GET['aem']);
 	if ($aid === '' || $aem === '') {
 		return false;
 	}
@@ -240,7 +239,7 @@ function cf7optin_handle_opt_in_link() {
 	if (!$url_params) { 
 	// if no submission ID or submitter email in URL params - display error
 	// Should never happen because we're checking this before displaying the page but I'm paranoid
-		$message = array('alert', __('Error. Something went really wrong! No required parameters found!', 'cf7-optin'));
+		$message = array('alert', esc_html__('Error. Something went really wrong! No required parameters found!', 'cf7-optin'));
 	} else { // If proper URL params found - decrypting and checking if there is submission in flamingo posts
 		//action hook fired when url params look ok and we are displaying opt-in page 
 		do_action('cf7optin_after_proper_url_params');
@@ -275,12 +274,12 @@ function cf7optin_handle_opt_in_link() {
 				$expires = intval($cf7optin_options['expires']);// hours to expire from settings
 				$extime = $expires * 3600;
 				if ($now_date - $cf7sub->get_sub_date() > $extime) {
-					$message = array('alert', sprintf(__('Error. This document has expired and can not be approved. More than %d hours from submission passed.', 'cf7-optin'), $expires));
+					$message = array('alert', sprintf(esc_html__('Error. This document has expired and can not be approved. More than %d hours from submission passed.', 'cf7-optin'), $expires));
 				} else {
 					if ($cf7sub->get_status() === '1') {
-						$message = array( 'alert', __('Error. This document has been already approved.', 'cf7-optin'));
+						$message = array( 'alert', esc_html__('Error. This document has been already approved.', 'cf7-optin'));
 					} else {
-						$message = array( '', sprintf( __('Document %1$s found.', 'cf7-optin'), $cf7sub->get_subject() ));
+						$message = array( '', sprintf( esc_html__('Document %1$s found.', 'cf7-optin'), $cf7sub->get_subject() ));
 						//action hook fired when submission is found  
 						do_action('cf7optin_before_final_email');
 						
@@ -290,7 +289,7 @@ function cf7optin_handle_opt_in_link() {
 				$flag = true;
 			}
 		} //if parameters not found in flamingo (ie. 30 dys passed)
-		if (!$flag) $message = array('alert', __('Error. There is no document to approve.', 'cf7-optin'));
+		if (!$flag) $message = array('alert', esc_html__('Error. There is no document to approve.', 'cf7-optin'));
 	}
 	$role = ''; // some ARIA tweaks for screenreader users 
 	if ($message[0] !== '') $role = ' role="' . $message[0] . '"';
@@ -407,38 +406,38 @@ function cf7optin_handle_final_email($cf7sub) {
 			$attachments[] = $csv_file_patch;
 		}
 		if ( count($attachments) > 0 ) { //if attachments - adding info on page and in email
-			$message .= sprintf(__('Your document has %d attachment files. ', 'cf7-optin'), count($attachments));
+			$message .= sprintf(esc_html__('Your document has %d attachment files. ', 'cf7-optin'), count($attachments));
 			$filenames = array();
 			foreach ($attachments as $path_str) {
 				$filenames[] = basename($path_str);
 			}
 			$filelist = implode(", ", $filenames);
-			$mail_body .= sprintf(_n('<p>This document has %d attachment: %s</p>', '<p>This document has %d attachments: %s</p>', count($attachments) , 'cf7-optin'), count($attachments), $filelist);
+			$mail_body .= '<p>'. sprintf(_n('This document has %d attachment: %s', 'This document has %d attachments: %s', count($attachments) , 'cf7-optin'), count($attachments), $filelist) . '</p>';
 		}
 		if ($attachments === false) {//if there should be some attachments but files not found
 			$attachments = array();
-			$message .= __('There was a problem with sending submitted files! Submission is valid but could not be approved. Please contact the site administrator.', 'cf7-optin');
-			echo '<p>'. $message .'</p>';
+			$message .= esc_html__('There was a problem with sending submitted files! Submission is valid but could not be approved. Please contact the site administrator.', 'cf7-optin');
+			echo '<p>'. esc_html($message) .'</p>';
 			return;
 		}
 		$mail_sent = wp_mail(
 			//$mail_to,
 			$settings->get_optin_mail_to(),
-			$mail_subject,
-			$mail_body,
+			esc_html($mail_subject),
+			esc_html($mail_body),
 			$headers,
 			$attachments
 			); //Final email
 		
 		if ($mail_sent) {
-			$message .= __('Thank you. Your submission has been approved and sent properly.', 'cf7-optin');
+			$message .= esc_html__('Thank you. Your submission has been approved and sent properly.', 'cf7-optin');
 			if ($cf7sub->get_db_plugin() === 'flamingo') {
 				$update = update_post_meta($sub_id, '_field_accepted' , '1');
 			} else {
 				$update = $cf7sub->set_cfdb7_status_accepted();
 			} 
 			if ($update === false) { 
-				$message .= __('Your submission has been approved but there was an error while processing data. Please contact the site administrator.', 'cf7-optin');
+				$message .= esc_html__('Your submission has been approved but there was an error while processing data. Please contact the site administrator.', 'cf7-optin');
 			} else {
 				//confirmation email to submitter
 				$mail_to = $form_data['your-email'];
@@ -460,7 +459,7 @@ function cf7optin_handle_final_email($cf7sub) {
 					); //Confirmation email
 					
 				if ($mail_sent === false) {
-					$message .= __('Your submission has been approved but there was an error while sending confirmation message. Please contact the site administrator.', 'cf7-optin');
+					$message .= esc_html__('Your submission has been approved but there was an error while sending confirmation message. Please contact the site administrator.', 'cf7-optin');
 				} else { //All went OK - deleting attachment files if needed
 					if ($cf7sub->get_db_plugin() === 'flamingo') { //TODO - setting if removing file
 						foreach ($attachments as $attachment) {
@@ -473,12 +472,12 @@ function cf7optin_handle_final_email($cf7sub) {
 				}
 			}
 		} else {
-			$message .= __('There was an error sending final email with your data. Please contact the site administrator.', 'cf7-optin');
+			$message .= esc_html__('There was an error sending final email with your data. Please contact the site administrator.', 'cf7-optin');
 		}
 	} else { //
-		$message .= __('There was an error while processing your data. Form settings could not be found. Please contact the site administrator.', 'cf7-optin');
+		$message .= esc_html__('There was an error while processing your data. Form settings could not be found. Please contact the site administrator.', 'cf7-optin');
 	}
-	echo '<p>'. $message .'</p>';
+	echo '<p>'. esc_html($message) .'</p>';
 }
 
 
