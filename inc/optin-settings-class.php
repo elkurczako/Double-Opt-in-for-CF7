@@ -24,21 +24,21 @@ class CF7OPTIN_Settings {
 		return $this->mail_to;
 	}
 	private function set_optin_mail_to($mail_to) {
-		$this->mail_to = esc_html($mail_to);
+		$this->mail_to = $mail_to;
 	}
 	
 	public function get_optin_mail_subject() {
 		return $this->mail_subject;
 	}
 	private function set_optin_mail_subject($mail_subject) {
-		$this->mail_subject = esc_html($mail_subject);
+		$this->mail_subject = $mail_subject;
 	}
 	
 	public function get_optin_mail_body() {
 		return $this->mail_body;
 	}
 	private function set_optin_mail_body($mail_body) {
-		$this->mail_body = esc_html($mail_body);
+		$this->mail_body = $mail_body;
 	}
 	
 	public function get_optin_headers_type() {
@@ -66,14 +66,14 @@ class CF7OPTIN_Settings {
 		return $this->con_subject;
 	}
 	private function set_optin_con_subject($con_subject) {
-		$this->con_subject = esc_html($con_subject);
+		$this->con_subject = $con_subject;
 	}
 	
 	public function get_optin_con_body() {
 		return $this->con_body;
 	}
 	private function set_optin_con_body($con_body) {
-		$this->con_body = esc_html($con_body);
+		$this->con_body = $con_body;
 	}
 	
 	public function get_optin_con_attachment() {

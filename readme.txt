@@ -24,9 +24,13 @@ Functionality of this plugin also depend on installing and activating one of the
 
 Note that BOTH Contact Form 7 and one of the listed above plugins are required for double opt-in functionality to work.
 
-**Additional plugin features**
+**Help and Docs**
 
-Apart from its main feature, Double Opt-in for CF7 adds some functions you may find nice and useful:
+The first and most complete documentation is located on [plugin official page](https://sirta.pl/double-opt-in-for-contact-form-7-documentation/).
+If you're a developer, feel free to take a look at [the plugin page on GitHub repository](https://github.com/elkurczako/Double-Opt-in-for-CF7).
+You can also seek for help on WordPress support forum.
+
+**Plugin features**
 
 * One click conversion of existing CF7 forms into double opt-in enabled forms.
 * URL parameters encryption to make confirmation links safe.
@@ -35,10 +39,15 @@ Apart from its main feature, Double Opt-in for CF7 adds some functions you may f
 * Adding a CSV file attachment to final submission email containing form data.
 * Adding file attachment to final confirmation email sent to the submitter.
 * Setting expiration time for submissions to be confirmed.
+* Ability to manually confirm forms. That can be useful if your submitter enters an invalid email address, and you are sure you want to send their submission anyway.
+
+**Additional enhancements**
+
+Apart from its main feature, Double Opt-in for CF7 adds some functions you may find nice and useful:
+
 * Custom, accessible file upload inputs for your forms which look better, can be CSS styled and allow easy selecting and deselecting files to upload. This works for every CF7 form, not only double opt-in enabled.
 * Custom, more specific validation errors for radio buttons and checkboxes for improved accessibility.
 * Option to change CSV separator when exporting submissions from Flamingo plugin. It also adds BOM to CSV exports, allowing them to be properly opened in MS Excel. 
-* Ability to manually confirm forms. That can be useful if your submitter enters an invalid email address, and you are sure you want to send their submission anyway.
 * Additional column on Flamingo Inbound Messages screen indicating if submission is complete or still waiting for being confirmed by sender.
 
 **What is double opt-in and why use it:**

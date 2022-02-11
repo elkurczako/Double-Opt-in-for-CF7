@@ -3,7 +3,7 @@
  * 	Plugin Name: Double opt-in for CF7
 	Plugin URI: https://sirta.pl
 	Description: Additional validation and double opt-in functionality for Contact Form 7 plugin.
-	Version: 1.0.0
+	Version: 1.0.1
 	Author: Krzysztof Busłowicz
 	Text Domain: cf7-optin
 	Domain Path: /languages/
@@ -267,6 +267,7 @@ function cf7optin_handle_opt_in_link() {
 		}			
 		foreach ($found as $submission) { // $submission - db plugin post id 
 		// creating submission objects and compare with parameters 
+		
 			$cf7sub = new CF7OPTIN_Submission($db_plugin, $submission);	
 			
 			if (intval($cf7sub->get_id()) === intval($realid) && $cf7sub->get_sender() === $realem) {				
@@ -306,7 +307,7 @@ function cf7optin_handle_opt_in_link() {
 function cf7optin_mail_components( $components, $number ) {
 	$message_body = $components[ 'body' ];
 	//in case cfdb7 plugin used and no flamingo - get serial fom cfdb7 table
-	$message_body = apply_filters('cf7optin_replace_cfdb7_serial', $message_body);
+	$message_body = cf7optin_replace_cfdb7_serial($message_body);
 		
 	$starttag = strpos($message_body,'{{');
 	if ($starttag) { //is this "{{tagname}}"?
@@ -340,11 +341,10 @@ add_filter( 'wpcf7_mail_components', 'cf7optin_mail_components', 10, 2 );
 */
 function cf7optin_replace_cfdb7_serial($message_body){
 	
-	
 	$cf7optin_options = get_option('cf7optin_main_settings');
 	$db_plugin = isset(($cf7optin_options['db_plugin'])) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
+	
 	if ($db_plugin === 'cfdb7') {
-		
 		global $wpdb; //prepare next cfdb7 serial 
 		$cfdb       = apply_filters( 'cfdb7_database', $wpdb );
 		$table_name = $cfdb->prefix.'db7_forms';
@@ -391,7 +391,6 @@ function cf7optin_handle_final_email($cf7sub) {
 		$add_csv = $settings->get_optin_add_csv();
 		$attachments = $settings->get_optin_attachments();
 		
-		
 		// mail components - replacing tags with stored values
 		$mail_subject = cf7optin_mail_tags_replace($form_data, $mail_subject);
 		$mail_body = cf7optin_mail_tags_replace($form_data, $mail_body);
@@ -423,8 +422,8 @@ function cf7optin_handle_final_email($cf7sub) {
 		$mail_sent = wp_mail(
 			//$mail_to,
 			$settings->get_optin_mail_to(),
-			esc_html($mail_subject),
-			esc_html($mail_body),
+			$mail_subject,
+			$mail_body,
 			$headers,
 			$attachments
 			); //Final email
