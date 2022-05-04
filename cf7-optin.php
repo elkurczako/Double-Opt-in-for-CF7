@@ -3,7 +3,7 @@
  * 	Plugin Name: Double opt-in for CF7
 	Plugin URI: https://sirta.pl
 	Description: Additional validation and double opt-in functionality for Contact Form 7 plugin.
-	Version: 1.0.1
+	Version: 1.0.2
 	Author: Krzysztof Busłowicz
 	Text Domain: cf7-optin
 	Domain Path: /languages/
@@ -143,7 +143,7 @@ function cf7optin_checkbox_validation_filter( $result, $tag ) {
 	$cf7optin_msg = $cf7optin_options['customvalidation'];
 	if ($cf7optin_msg === 'true') {
 		$name = $tag->name;
-		$is_required = $tag->is_required() || 'checkbox' == $tag->type;
+		$is_required = $tag->is_required() ;
 		$value = isset( $_POST[$name] ) ? (array) sanitize_text_field($_POST[$name]) : array();
 
 		if ( $is_required and empty( $value ) ) {

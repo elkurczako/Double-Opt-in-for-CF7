@@ -1,5 +1,5 @@
 /* Scripts for Double opt-in for CF7 plugin
-*  version: 1.0
+*  version: 1.0.1
  */
  
 //Handles DOM loading without jQuery
@@ -57,6 +57,7 @@
  docReady(function() {
 	copyConfirmationEmail();
 	addMissingAttributes();
+	observeWPCF7group(); // for CF7 Conditional fields
  });
  
  //adds required attribute to elements with "cf7req" class
@@ -166,4 +167,37 @@ function displayNotValidTip(elem, msg) {
 	elemContainer.appendChild(tipspan);
 	elemContainer.classList.add('wpcf7-not-valid');
 }
-	
+
+//	reset hidden (conditional) fields
+function observeWPCF7group() {
+	WPCF7groups = document.querySelectorAll('div.wpcf7cf-hidden');
+	for (var i = 0 ; i < WPCF7groups.length ;i++) {
+		respondToVisibility(WPCF7groups[i], UncheckInputs);
+	}
+}
+// 	Start observing visbility of element. On change,
+//   the callback is called with Boolean visibility as
+//   argument:
+
+function respondToVisibility(element, callback) {
+	var options = {
+		root: document.documentElement,
+	};
+
+	var observer = new IntersectionObserver((entries, observer) => {
+		entries.forEach(entry => {
+			callback(entry.intersectionRatio > 0, entry);
+		});
+	}, options);
+
+	observer.observe(element);
+}
+
+function UncheckInputs(visibility, entry) {
+	if (visibility === false) {
+		inputs = entry.target.querySelectorAll('input[type="radio"]');
+		for (var j = 0 ; j < inputs.length ; j++) {
+			inputs[j].checked = false;
+		}
+	}
+}

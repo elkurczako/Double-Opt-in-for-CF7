@@ -2,7 +2,7 @@
 
 /*  Double Opt-in for CF7 
 *	Class for storing Double opt-in enabled forms settings
-**	version: 1.0
+**	version: 1.0.1
 */
 
 defined( 'ABSPATH' ) or die( 'Cheating? 	No script kiddies please!' );
