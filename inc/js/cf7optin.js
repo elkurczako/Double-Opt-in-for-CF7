@@ -113,6 +113,15 @@ function copyEmailValue(previousel, currentel) {
 				displayNotValidTip(currentel, 'notemail');
 			}
 		}
+		if (isEmail === 'domain') {
+			if (previousel.validationMessage !== "domain") {
+				displayNotValidTip(previousel, 'domain');
+			}
+			if (currentel.validationMessage !== "domain") {
+				displayNotValidTip(currentel, 'domain');
+			}
+		}
+
 	}
 }
 
@@ -127,7 +136,7 @@ function checkIfConfirmChanged(previousel, currentel) {
 		if (previousel.validationMessage !== "different") {
 			displayNotValidTip(previousel, 'diffa');
 		}
-		checkEmailUWWDomain(currentel.value);
+		checkEmailValue(currentel.value);
 	}
 }
 // Checking if input value is a valid email address
@@ -136,6 +145,10 @@ function checkEmailValue(val) {
 	const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 	if (re.test(val) === false) {
 		result = 'notemail';
+		return result;
+	}
+	if (val.includes(cf7optinWarning.PreferredDomain) === false) {
+		result = 'domain';
 		return result;
 	}
 }
@@ -154,6 +167,10 @@ function displayNotValidTip(elem, msg) {
 		warning = cf7optinWarning.FirstEmailWarning;
 		elem.setCustomValidity('different');
 		elem.setAttribute('aria-invalid', 'true');
+		break;
+		case 'domain':
+		warning = cf7optinWarning.BadDomainWarning;
+		elem.setCustomValidity('domain');
 		break;
 		case 'notemail':
 		warning = cf7optinWarning.NotEmailWarning;

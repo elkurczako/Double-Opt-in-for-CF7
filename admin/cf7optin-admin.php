@@ -125,7 +125,14 @@ function cf7optin_register_settings() {
 		'wpcf7-optin', 
 		'cf7optin_opts' 
 	);
-	add_settings_field( 
+	add_settings_field(
+		'cf7optin_mail_domain',
+		__('Preferred email domain for submissions', 'cf7-optin'),
+		'cf7optin_email_domain',
+		'wpcf7-optin',
+		'cf7optin_opts'
+	);
+	add_settings_field(
 		'cf7optin_custom_val_msg', 
 		__('Enchance validation error messages', 'cf7-optin'), 
 		'cf7optin_custom_validation_msg', 
@@ -179,6 +186,7 @@ function cf7optin_options_validate( $input ) {
 			$input['enc_key'] = sanitize_text_field($input['enc_key']);
 			$input['enc_iv'] = sanitize_text_field($input['enc_iv']);
 		}
+        if ($input['emaildomain'] !== null) $input['emaildomain'] = sanitize_text_field($input['enc_iv']);
 		if (intval($input['expires']) === 0) {
 			$errmsg = esc_html__('Warning. You have set expiration to ZERO hours. No double opt-in form will be confirmed!', 'cf7-optin');
 			$errtype = 'warning';
@@ -236,7 +244,7 @@ function cf7optin_db_plugin_used() {
 	$cf7optin_options = get_option('cf7optin_main_settings');
 	$flamingo = is_plugin_active( 'flamingo/flamingo.php' );
 	$cfdb7 = is_plugin_active( 'contact-form-cfdb7/contact-form-cfdb-7.php');
-	$db_plugin = isset(($cf7optin_options['db_plugin'])) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
+	$db_plugin = (($cf7optin_options['db_plugin']) !== null) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
 	$dbflamingo = ($flamingo && $db_plugin === 'flamingo') ? "checked" : "";
 	$dbcfdb7 = ($cfdb7 && $db_plugin === 'cfdb7') ? "checked" : "";
 	echo '<fieldset><legend><span class="screen-reader-text">' . esc_html__('Choose CF7 database plugin','cf7-optin') . '</span></legemd>';
@@ -286,6 +294,15 @@ function cf7optin_file_input_override(){
 	echo '</label>';
 	echo '</p><p>' . esc_html__('Standard file inputs will be replaced with more flexible element. New control shows file size information and allows to remove selected file from upload. You can also change its appearance with CSS.','cf7-optin');
 	echo '</p>';
+}
+function cf7optin_email_domain(){
+    $cf7optin_options = get_option('cf7optin_main_settings');
+    $mail_domain = isset($cf7optin_options['maildomain']) ? esc_attr($cf7optin_options['maildomain']) : '';
+    $mail_domain_warning = isset($cf7optin_options['maildomainwarning']) ? esc_attr($cf7optin_options['maildomainwarning']) : '';
+    echo '<input type="text" size="40" id="mail-domain" name="cf7optin_main_settings[maildomain]" value="'. esc_attr($mail_domain) . '" >';
+    echo '<p>' . esc_html__('Sets validation warning (but not blocking submit) when submitted email domain does not contain entered here string.' ,'cf7-optin');
+    echo '</p><p><label for="mail-domain-warning" ><strong>' . esc_html__('Warning message, when preferred domain is set' ,'cf7-optin') . '</strong></label>';
+    echo '<input type="text" size="200" id="mail-domain-warning" name="cf7optin_main_settings[maildomainwarning]" value="'. esc_attr($mail_domain_warning) . '" ></p>';
 }
 function cf7optin_custom_validation_msg(){
 	$cf7optin_options = get_option('cf7optin_main_settings');
@@ -449,6 +466,7 @@ function cf7optin_form_metabox() {
 	$selectedcf7 = ($selectedform !== '' && $selectedform !== '0') ? get_the_title(intval($selectedform)) : esc_html__('no CF7 form selected', 'cf7-optin');
 	$mail_format = 	get_post_meta($post->ID, '_reg_headers', true);
 	$csv_attachment = get_post_meta($post->ID, '_csv', true);
+    $replyto = get_post_meta($post->ID, '_reply_to', true);
 	$registration_email = get_post_meta($post->ID, '_reg_email', true); //email to send accepted forms to
 	$registration_title = get_post_meta($post->ID, '_reg_title', true); 
 	$registration_files = get_post_meta($post->ID, '_reg_files', true); 
@@ -513,6 +531,18 @@ function cf7optin_form_metabox() {
 					echo '</label>';
 					echo '</p>'; ?>	
 				</td>
+			<tr>
+				<th scope="row"><?php _e('Add Reply-To?', 'cf7-optin'); ?><br/><span style="font-weight:400;"><?php _e('When checked, an e-mail address entered in a CF7 form will be used as a Reply-To in final e-mail.','cf7-optin'); ?></span>
+				<td><?php
+				$replyaddr = "";
+				if ($replyto === "true") $replyaddr = "checked";
+					echo '<p>';
+					echo '<label for="reply_to" class="switch">';
+					echo '<input type="checkbox" id="reply_to" name="reply_to" value="true"'. esc_attr($replyaddr) . '>';
+					echo '<span class="slider round"></span>';
+					echo '</label>';
+					echo '</p>'; ?>
+				</td>
 			</tr>
 			<tr>
 				<th scope="row"><?php _e('Final email address', 'cf7-optin'); ?><br/><span style="font-weight:400;"><?php _e('The address your confirmed forms will be sent to','cf7-optin'); ?></span></th>
@@ -539,7 +569,7 @@ function cf7optin_form_metabox() {
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><?php _e('Confirmation email subject', 'cf7-optin'); ?></th>
+				<th scope="row"><?php _e('Confirmation email subject', 'cf7-optin'); ?><br/><span style="font-weight:400;"><?php _e('Leave empty if you do not want to send confirmation email.','cf7-optin'); ?></span></th>
 				<td>
 					<p><input type="text" size="200" id="confirmation_title" name="confirmation_title" autocomplete="on" value="<?php echo esc_html( $confirmation_title ) ; ?>"></p>
 				</td>
@@ -638,6 +668,12 @@ function cf7optin_save_form_meta($post_id, $post) {
 		update_post_meta( $post_id, '_csv', $csv_attachment );
 	} else {
 		update_post_meta( $post_id, '_csv', "" );
+	}
+	if ( isset ( $_POST['reply_to'] )) {
+		$csv_attachment = sanitize_text_field( $_POST['reply_to'] );
+		update_post_meta( $post_id, '_reply_to', $csv_attachment );
+	} else {
+		update_post_meta( $post_id, '_reply_to', "" );
 	}
 	if ( isset ( $_POST['registration_email'] )) {
 		$registration_email = sanitize_text_field( $_POST['registration_email'] );
@@ -974,8 +1010,8 @@ add_filter( 'manage_flamingo_inbound_posts_columns', 'cf7optin_flamingo_columns'
 add_action('manage_flamingo_inbound_posts_custom_column', 'cf7optin_flamingo_status', 10, 2);
 function cf7optin_flamingo_status($column_name,$post_id) {
   if ($column_name=='accepted') {
-    $status = get_post_meta( $post_id, '_accepted', true );
+    $status = (get_post_meta( $post_id, '_field_accepted', true ) === '') ? get_post_meta( $post_id, '_accepted', true ) : get_post_meta( $post_id, '_field_accepted', true ) ;
 	$status = ($status !== "1") ?  '<span style="color:red;font-weight:700;">' . esc_html_x('Not confirmed', 'Submission status', 'cf7-optin') .'</span>' : '<span style="color:darkgreen;font-weight:400;">' . esc_html_x('Sent', 'Submission status', 'cf7-optin') .'</span>' ;
-	echo esc_html($status);
+	echo $status;
   }
 }

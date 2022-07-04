@@ -3,7 +3,7 @@ Contributors: Elkurczako
 Tags: contact form, contact, email, multilingual, accessibility
 Requires at least: 5.3
 Tested up to: 5.9
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -107,5 +107,15 @@ For detailed plugin documentation, please visit [plugin official page](https://s
 = 1.0 =
 * Initial plugin release.
 
+= 1.0.1 =
+* Fixed unnecessary escaping which caused wrong format of HTML email body.
+* Fixed a bug with wrong CFDB7 being accepted from confirmation link.
+
+= 1.0.2 =
+* Fixed non required chechbox validation.
+* Added JS validation handling for CF7 Conditional Fields.
+
 == Upgrade Notice ==
 
+= 1.0.1 =
+This versions fixes HTML emails and a major problem when CFDB7 plugin is used.

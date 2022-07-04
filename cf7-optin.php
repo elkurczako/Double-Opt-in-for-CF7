@@ -3,7 +3,7 @@
  * 	Plugin Name: Double opt-in for CF7
 	Plugin URI: https://sirta.pl
 	Description: Additional validation and double opt-in functionality for Contact Form 7 plugin.
-	Version: 1.0.2
+	Version: 1.0.3
 	Author: Krzysztof Busłowicz
 	Text Domain: cf7-optin
 	Domain Path: /languages/
@@ -62,15 +62,21 @@ function cf7optin_database_notice(){
 
 /* Registering frontend scripts and styles */
 function cf7optin_enqueue() {
+    $cf7optin_options = get_option('cf7optin_main_settings');
+    $mail_domain = isset($cf7optin_options['maildomain']) ? esc_attr($cf7optin_options['maildomain']) : '';
+    $mail_domain_warning = isset($cf7optin_options['maildomainwarning']) ? esc_attr($cf7optin_options['maildomainwarning']) : '';
+
 	$cf7optin_js_strings = array(
 	'DefaultlWarning'		=> esc_html__('Attention! Invalid data in the field above!', 'cf7-optin'),
 	'SecondEmailWarning'	=> esc_html__('Attention! This email address is different than the address entered above. Check both fields for valid email.', 'cf7-optin'),
 	'FirstEmailWarning'		=> esc_html__('Attention! Email address is different than confirmation address entered below. Check both fields for valid email.', 'cf7-optin'),
-	'NotEmailWarning'		=> esc_html__('Attention! Invalid email address!', 'cf7-optin')
+	'NotEmailWarning'		=> esc_html__('Attention! Invalid email address!', 'cf7-optin'),
+	'BadDomainWarning'		=> esc_html($mail_domain_warning),
+    'PreferredDomain'       => esc_html($mail_domain)
 	);
 			
-	wp_register_script( 'cf7optin-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin.js', array(), '1.0');
-	wp_register_style( 'cf7optin-style',  cf7optin_PLUGIN_URL . 'inc/css/cf7optin.css', array(), '1.0');
+	wp_register_script( 'cf7optin-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin.js', array(), '1.1');
+	wp_register_style( 'cf7optin-style',  cf7optin_PLUGIN_URL . 'inc/css/cf7optin.css', array(), '1.1');
 	wp_localize_script('cf7optin-js', 'cf7optinWarning', $cf7optin_js_strings);
 	wp_enqueue_script('cf7optin-js');
 	wp_enqueue_style('cf7optin-style');
@@ -78,7 +84,7 @@ function cf7optin_enqueue() {
 	$cf7optin_options = get_option('cf7optin_main_settings');
 	$cf7optin_inputs = $cf7optin_options['fileinput'];
 	if ($cf7optin_inputs === 'true') {
-		wp_register_script( 'cf7optin-input-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin-fileinput.js', array(), '1.0');
+		wp_register_script( 'cf7optin-input-js',  cf7optin_PLUGIN_URL . 'inc/js/cf7optin-fileinput.js', array(), '1.1');
 		$cf7optin_js_fileinput_strings = array(
 			'LabelDefaultText'		=> esc_html__('Select file', 'cf7-optin'),
 			'SelectedFile'	=> esc_html_x('Selected: ', 'For filename to upload', 'cf7-optin'),
@@ -89,6 +95,10 @@ function cf7optin_enqueue() {
 		wp_localize_script( 'cf7optin-input-js', 'cf7optinInput', $cf7optin_js_fileinput_strings);
 		wp_enqueue_script( 'cf7optin-input-js' );
 	}
+    if (file_exists(get_template_directory() . '/plugins/cf7-optin/cf7optin-forms.css')) {
+        wp_register_style('cf7optin-external', get_template_directory_uri() . '/plugins/cf7-optin/cf7optin-forms.css');
+        wp_enqueue_style('cf7optin-external');
+    }
 }
 add_action( 'wp_enqueue_scripts', 'cf7optin_enqueue');
 
@@ -247,7 +257,7 @@ function cf7optin_handle_opt_in_link() {
 		$realem = cf7optin_le_chiffre($url_params[1]);
 		$flag = false; //false means no document found
 		$cf7optin_options = get_option('cf7optin_main_settings');
-		$db_plugin = isset(($cf7optin_options['db_plugin'])) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
+		$db_plugin = isset($cf7optin_options['db_plugin']) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
 		if ($db_plugin === 'flamingo') { //flamingo
 			$optincf7_args = array(
 				'post_type'	=>	'flamingo_inbound',
@@ -342,7 +352,7 @@ add_filter( 'wpcf7_mail_components', 'cf7optin_mail_components', 10, 2 );
 function cf7optin_replace_cfdb7_serial($message_body){
 	
 	$cf7optin_options = get_option('cf7optin_main_settings');
-	$db_plugin = isset(($cf7optin_options['db_plugin'])) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
+	$db_plugin = isset($cf7optin_options['db_plugin']) ? esc_attr($cf7optin_options['db_plugin']) : 'flamingo';
 	
 	if ($db_plugin === 'cfdb7') {
 		global $wpdb; //prepare next cfdb7 serial 
@@ -389,12 +399,14 @@ function cf7optin_handle_final_email($cf7sub) {
 		$mail_body = $settings->get_optin_mail_body();
 		$headers_type = $settings->get_optin_headers_type();
 		$add_csv = $settings->get_optin_add_csv();
+        $reply_to = $settings->get_optin_reply_to();
 		$attachments = $settings->get_optin_attachments();
 		
 		// mail components - replacing tags with stored values
 		$mail_subject = cf7optin_mail_tags_replace($form_data, $mail_subject);
 		$mail_body = cf7optin_mail_tags_replace($form_data, $mail_body);
-		$headers = ($headers_type === 'html') ? array('Content-Type: text/html; charset=UTF-8') : ''; // HTML or plain text email
+		$headers[] = ($headers_type === 'html') ? 'Content-Type: text/html; charset=UTF-8' : ''; // HTML or plain text email
+        $headers[] = ($reply_to === 'true') ? 'Reply-To: ' . $form_data['your-email'] : '';
 		$attachments = cf7optin_get_mail_attachments($form_data, $attachments, $cf7sub->get_db_plugin());//get array of attachment file paths
 		
 		// add csv attachment if set in settings
@@ -420,14 +432,13 @@ function cf7optin_handle_final_email($cf7sub) {
 			return;
 		}
 		$mail_sent = wp_mail(
-			//$mail_to,
 			$settings->get_optin_mail_to(),
 			$mail_subject,
 			$mail_body,
 			$headers,
 			$attachments
 			); //Final email
-		
+		unset( $headers ); //cause we don't want to send them reply-to
 		if ($mail_sent) {
 			$message .= esc_html__('Thank you. Your submission has been approved and sent properly.', 'cf7-optin');
 			if ($cf7sub->get_db_plugin() === 'flamingo') {
@@ -439,25 +450,29 @@ function cf7optin_handle_final_email($cf7sub) {
 				$message .= esc_html__('Your submission has been approved but there was an error while processing data. Please contact the site administrator.', 'cf7-optin');
 			} else {
 				//confirmation email to submitter
+                $send_conf = false;
 				$mail_to = $form_data['your-email'];
 				$con_subject = $settings->get_optin_con_subject();
-				$con_body = $settings->get_optin_con_body();
-				$con_subject = cf7optin_mail_tags_replace($form_data, $con_subject);
-				$con_body = cf7optin_mail_tags_replace($form_data, $con_body);
-				$con_attachment = $settings->get_optin_con_attachment();
-				$attached_file = array();
-				if (!empty($con_attachment)) {
-					$attached_file[] = $con_attachment['file'];	
-				}
-				$mail_sent = wp_mail(
-					$mail_to,
-					$con_subject,
-					$con_body,
-					$headers,
-					$attached_file
-					); //Confirmation email
-					
-				if ($mail_sent === false) {
+                if ($con_subject !== '') { // if subject empty skip sending confirmation
+                    $send_conf = true;
+                    $headers[] = ($headers_type === 'html') ? 'Content-Type: text/html; charset=UTF-8' : ''; // redeclaring
+                    $con_body = $settings->get_optin_con_body();
+                    $con_subject = cf7optin_mail_tags_replace($form_data, $con_subject);
+                    $con_body = cf7optin_mail_tags_replace($form_data, $con_body);
+                    $con_attachment = $settings->get_optin_con_attachment();
+                    $attached_file = array();
+                    if (!empty($con_attachment)) {
+                        $attached_file[] = $con_attachment['file'];
+                    }
+                    $mail_sent = wp_mail(
+                        $mail_to,
+                        $con_subject,
+                        $con_body,
+                        $headers,
+                        $attached_file
+                    ); //Confirmation email
+                }
+				if ($send_conf && $mail_sent === false) {
 					$message .= esc_html__('Your submission has been approved but there was an error while sending confirmation message. Please contact the site administrator.', 'cf7-optin');
 				} else { //All went OK - deleting attachment files if needed
 					if ($cf7sub->get_db_plugin() === 'flamingo') { //TODO - setting if removing file

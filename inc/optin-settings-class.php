@@ -14,6 +14,7 @@ class CF7OPTIN_Settings {
 	private $mail_body;
 	private $headers_type;
 	private $add_csv;
+    private $reply_to;
 	private $attachments;
 	private $con_subject;
 	private $con_body;
@@ -54,7 +55,13 @@ class CF7OPTIN_Settings {
 	private function set_optin_add_csv($add_csv) {
 		$this->add_csv = $add_csv;
 	}
-	
+	public function get_optin_reply_to() {
+		return $this->reply_to;
+	}
+	private function set_optin_reply_to($reply_to) {
+		$this->reply_to = $reply_to;
+	}
+
 	public function get_optin_attachments() {
 		return $this->attachments;
 	}
@@ -89,6 +96,7 @@ class CF7OPTIN_Settings {
 		$mail_body = get_post_meta($settings_id, '_reg_template',true);
 		$headers_type =  get_post_meta($settings_id, '_reg_headers',true);
 		$add_csv =  get_post_meta($settings_id, '_csv',true);
+		$reply_to =  get_post_meta($settings_id, '_reply_to',true);
 		$attachments = get_post_meta($settings_id, '_reg_files',true);
 		$con_subject = get_post_meta($settings_id, '_con_title',true);
 		$con_body = get_post_meta($settings_id, '_con_template',true);
@@ -99,6 +107,7 @@ class CF7OPTIN_Settings {
 		$this->set_optin_mail_body($mail_body);
 		$this->set_optin_headers_type($headers_type);
 		$this->set_optin_add_csv($add_csv);
+        $this->set_optin_reply_to($reply_to);
 		$this->set_optin_attachments($attachments);
 		$this->set_optin_con_subject($con_subject);
 		$this->set_optin_con_body($con_body);

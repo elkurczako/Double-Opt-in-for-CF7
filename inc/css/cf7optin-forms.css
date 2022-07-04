@@ -1,0 +1,91 @@
+/* Example of additional Stylesheet for admin Double opt-in for CF7 plugin
+*  custom styles for CF7 forms
+*  copy to /Your-theme-directory/plugins/cf7-optin
+*  version: 1.0
+*/
+
+.wpcf7-form fieldset {
+    margin-bottom:1.5em;
+}
+fieldset.form-section {
+    margin-bottom: 4em;
+}
+.form-section > legend:first-child {
+    font-size: 2em;
+    line-height: 1em;
+}
+.wpcf7-form label {
+    display: inline-block;
+    min-width: 10em;
+    margin-right: 1em;
+}
+.wpcf7-form legend {
+    font-weight: 700;
+    font-size: 1.2em;
+    margin-bottom:1em;
+}
+.wpcf7-form textarea {
+    display:block;
+    width:80%
+}
+.wpcf7-form .form-tip {
+    font-style:italic;
+    font-size:0.9em;
+}
+.wpcf7-form .wpcf7-list-item {
+    display: block;
+    margin: 0 0 1em 1em;
+}
+.wpcf7-form .wpcf7-list-item:nth-child(odd),
+.wpcf7-form .form-list li:nth-child(odd) {
+    background-color:#fcf8e3;
+}
+.wpcf7-form .wpcf7-acceptance .wpcf7-list-item:nth-child(odd) {
+    background-color: transparent;
+}
+.wpcf7-form div {
+    margin-bottom: 1.5em;
+}
+.wpcf7-form ul,
+.wpcf7-form input {
+    max-width: 80vw;
+}
+.wpcf7-form li {
+    padding-bottom:0.5em;
+    padding-top:0.5em;
+}
+.wpcf7-form input[type="checkbox"],
+.wpcf7-form input[type="radio"] {
+    margin-bottom:1em;
+    margin-top:0.5em;
+    background-color:red;
+}
+#confirm-email {
+    font-size: 1.3em;
+}
+.wpcf7-form .wpcf7-submit, .file-upload {
+    display: inline-block;
+    padding: 10px 10px;
+    background: #093d66;
+    color: #fff;
+    border: 3px solid #093d66;
+    margin: 30px 0;
+    margin-right: 0px;
+    font-weight: 700;
+    font-size: 0.9em;
+    letter-spacing: 2px;
+    max-width: 300px;
+    white-space: normal;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+}
+.nofileselected {
+    background: top;
+    border: none;
+    font-size: 1em;
+    font-weight: 700;
+    font-family: inherit;
+    color: #666;
+}
